@@ -1,3 +1,4 @@
+# python -m app
 
 from time import sleep
 
