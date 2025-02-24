@@ -2,9 +2,15 @@
 
 from time import sleep
 
+from src import utils
+from importlib import reload
+reload(utils)  # make sure updates on utils funcs in effect
+
 from src.utils import get_driver
 from src.utils import (start_pyautogui, at_target_page, 
                        click_checkbox_on_verification_page)
+
+
 
 
 
