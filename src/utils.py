@@ -51,7 +51,10 @@ def click_checkbox_on_verification_page() -> bool:
 
 
 def at_target_page() -> bool:
-    image_on_target_page = './images/input-field-vertical-line.png' 
+    # images/symbol-collapse-folder.png
+    # images/input-field-vertical-line.png  # appear on both page
+    # images/search-symbol.png
+    image_on_target_page = 'images/symbol-collapse-folder.png' 
     assert Path(image_on_target_page).exists()
     if locate_image_center_on_screen(image_on_target_page):
         return True
