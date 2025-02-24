@@ -54,7 +54,8 @@ def at_target_page() -> bool:
     # images/symbol-collapse-folder.png
     # images/input-field-vertical-line.png  # appear on both page
     # images/search-symbol.png
-    image_on_target_page = 'images/symbol-collapse-folder.png' 
+    # images/cross.png
+    image_on_target_page = 'images/cross.png' 
     assert Path(image_on_target_page).exists()
     if locate_image_center_on_screen(image_on_target_page):
         return True
