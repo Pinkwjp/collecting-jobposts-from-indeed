@@ -1,6 +1,7 @@
 from time import sleep
 from contextlib import contextmanager
 from pathlib import Path
+from random import randint
 
 from seleniumbase import Driver
 import pyautogui
@@ -32,6 +33,26 @@ def locate_image_center_on_screen(image_file: str):
     except:
         return None
 
+def perform_click(x, y) -> bool:
+    try:
+        # click
+        pyautogui.moveTo(x, y, 2, pyautogui.easeInQuad) 
+        pyautogui.click()
+        print('clicked at {x}, {y}.')
+        sleep(4)  # wait for web page to response
+
+        # move out of the way to a random spot
+        random_x = 200 + randint(1, 50)
+        random_y = 300 + randint(1, 50)
+        pyautogui.moveTo(random_x, random_y, 2, pyautogui.easeInQuad)
+
+        # pyautogui.click()
+        # sleep(4)  # wait for web page to response
+        return True
+    except:
+        return False
+
+
 
 def click_checkbox_on_verification_page() -> bool:
     checkbox_image = './images/checkbox.png' 
@@ -55,8 +76,10 @@ def at_target_page() -> bool:
     # images/input-field-vertical-line.png  # appear on both page
     # images/search-symbol.png
     # images/cross.png
-    image_on_target_page = 'images/cross.png' 
+    # images/fr.png
+    image_on_target_page = 'images/fr.png' 
     assert Path(image_on_target_page).exists()
+    print(f'target image: {image_on_target_page}')
     if locate_image_center_on_screen(image_on_target_page):
         return True
     return False
