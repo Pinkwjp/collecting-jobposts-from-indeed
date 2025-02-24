@@ -51,7 +51,7 @@ def click_checkbox_on_verification_page() -> bool:
 
 
 def at_target_page() -> bool:
-    image_on_target_page = './images/email-field-dark.png' # screen partially black out by the cookies setting popup
+    image_on_target_page = './images/input-field-vertical-line.png' 
     assert Path(image_on_target_page).exists()
     if locate_image_center_on_screen(image_on_target_page):
         return True
