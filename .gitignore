@@ -174,5 +174,7 @@ cython_debug/
 .pypirc
 
 # codes from old version of the project
-.old-src/
-.old_codes/
+old-src/
+old_codes/
+
+images/
