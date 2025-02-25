@@ -13,6 +13,9 @@ from src.utils import (start_pyautogui,
                        perform_click)
 
 
+# use pipenv to generate requirements.txt 
+# pipenv run pip freeze > requirements.txt    
+
 
 def handle_verification() -> bool:
     # assume at Indeed home page with cloudflare verification
