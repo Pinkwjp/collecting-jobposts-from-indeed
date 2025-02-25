@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "9ad34ea5bda399e87bba34a78d1d175bb61b09613b28d381d1a094d21a3b51aa"
+            "sha256": "f7431f113e8e1c7baf0a23ad26a8d5ddd2f1bc0c9b5e26eb03b738d0da7fe2d3"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -30,6 +30,7 @@
                 "sha256:1bd32405dacc920b42b83ba01644747ed77456a65760e285fbc47633ceddaf8b",
                 "sha256:99045d7d3f08f91f0d656bc9b7efbae189426cd913d830294a15eefa0ea4df16"
             ],
+            "index": "pypi",
             "markers": "python_full_version >= '3.7.0'",
             "version": "==4.13.3"
         },
@@ -712,12 +713,12 @@
         },
         "seleniumbase": {
             "hashes": [
-                "sha256:2aaf5fd8f0bfe10800729d1e55ee8f7b0b3fdc706ec40caf8fd7357362e0cf4e",
-                "sha256:4d699a9e166cb978edc2d8105f55179ba9cb2aed29e37629aad81310992dd177"
+                "sha256:4965380b2a0efbdef48aab0cb2702ef9d28c828074ce30e96b13d7db59a87e09",
+                "sha256:bcc22f4519274f4c27ae7c32ac377f56858bba2d54d0309d0010374bfaadb3ef"
             ],
             "index": "pypi",
             "markers": "python_version >= '3.8'",
-            "version": "==4.35.0"
+            "version": "==4.35.1"
         },
         "setuptools": {
             "hashes": [
