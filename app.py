@@ -28,12 +28,10 @@ def handle_verification() -> bool:
                 print('clicked checkbox.')
                 sleep(4) # wait for page to refresh
                 if not locate_image_center_on_screen(checkbox_image):
-                    print('bypass verification!')
                     return True
         else:
-            print('cannot to locate checkbox.')
+            print('trying to locate checkbox...')
         attempt += 1
-    print('failed to bypass verification.')
     return False 
 
 
@@ -44,11 +42,11 @@ def main():
         driver.uc_open_with_reconnect(url, 10)
         driver.maximize_window()
         sleep(5) # wait long enough for the cloudflare checkbox to appear
-
-        if not handle_verification():
-            print('exiting...')
         
-        print('ok') 
+        if not handle_verification():
+            print('failed to handle cloudflare verification, exiting...')
+            return
+        
 
 
 
