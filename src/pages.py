@@ -25,11 +25,7 @@ class BasePage:
         self.driver.maximize_window()
         sleep(2)  # NOTE: important, wait for page to load the google sign-in request
 
-
-class XBasePage:
-    def __init__(self,  driver):  
-        self.driver = driver
-        sleep(2)  
+ 
 
 
 class XPage:   
