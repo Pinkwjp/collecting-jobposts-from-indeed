@@ -35,14 +35,20 @@
 from time import sleep
 from pathlib import Path
 
-from src import utils
+from src import utils, pages, locators
 from importlib import reload
 reload(utils)  # make sure updates on utils funcs in effect
+reload(pages)
+reload(locators)
+
 
 from src.utils import get_driver
 from src.utils import (start_pyautogui, 
                        locate_image_center_on_screen, 
                        perform_click)
+
+
+from src.locators import locator_input_job_title, locator_input_location, locator_find_job_button
 
 
 
@@ -75,8 +81,25 @@ def main():
         if not handle_verification():
             print('failed to handle cloudflare verification, exiting...')
             return
+        sleep(3)
         
+        # type and search
+        # driver.type(selector, text)
+        # driver.wait_for_element_visible(selector)
+        
+        driver.type(locator_input_job_title.css_selector, 'python')
+        sleep(1)
+        driver.type(locator_input_location.css_selector, 'Vancouver, BC')
+        sleep(1)
+        driver.click(locator_find_job_button.css_selector)
+        sleep(10)
 
+
+# BaseCase self.get_new_driver(undetectable=None)
+# the SB manager (which has more methods and functionality than the Driver format)
+def main_new():
+
+    pass
 
 
 if __name__ == '__main__':
