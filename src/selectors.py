@@ -1,7 +1,22 @@
 # css selectors on Indeed
 
 
+# search
 TITLE = "input[id='text-input-what']"
 LOCATION = "input[id='text-input-where']"
 SUBMIT = "button[type='submit']"
+
+# results
+RESULTS = "div[id='mosaic-jobResults']"
+
+# remote filter
+REMOTE_FILTER = "button[id='remote_filter_button']"
+HYDBRID = "a[id='option-1--menu--1']" # Hybrid work
+REMOTE = "a[id='option-2--menu--1']" # remote WORK
+
+# language filter
+LANGUAGE_FILTER = "button[id='filter-lang']"
+LANGUAGE_MENU = "ul[id='filter-lang-menu']"
+# JOB_LANGUAGE_ITEM = Locator(By.TAG_NAME, value="a")  English
+
 
