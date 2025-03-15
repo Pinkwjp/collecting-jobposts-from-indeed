@@ -11,7 +11,6 @@ import pyautogui
 
 
 
-
 def more_or_less(number: int) -> float:
     sign = choice([1, -1])
     delta = randint(1, 100) / 1000
@@ -41,6 +40,8 @@ def get_driver(**kwargs):
 
 
 # helper functions with pyautogui ***************************************************************************
+
+
 def locate_image_center_on_screen(image_file: str):
     assert Path(image_file).exists()
     try: 
@@ -111,4 +112,25 @@ def start_pyautogui():
     new_position = (281, 295)  # just a random position to stay out of the way
     pyautogui.moveTo(*new_position, 2, pyautogui.easeInQuad) 
     sleep(3)
+
+
+
+
+def handle_verification() -> bool:
+    """handle cloudflare verification"""
+    checkbox_image = './images/checkbox-image.png'   
+    assert Path(checkbox_image).exists()
+    attempt = 0
+    while attempt < 3:
+        if target_center := locate_image_center_on_screen(checkbox_image):
+            if perform_click(target_center.x, target_center.y):
+                print('clicked checkbox.')
+                sleep(4) # wait for page to refresh
+                if not locate_image_center_on_screen(checkbox_image):
+                    return True
+        else:
+            print('trying to locate checkbox...')
+        attempt += 1
+    return False 
+
 

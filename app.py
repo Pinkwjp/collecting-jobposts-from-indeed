@@ -31,8 +31,6 @@
 # pipenv run pip freeze > requirements.txt   
 
 
-from time import sleep
-from pathlib import Path
 
 from src import utils, pages, locators, selectors
 from importlib import reload
@@ -43,31 +41,12 @@ reload(selectors)
 
 
 from src.utils import get_driver, sleepy
-from src.utils import (start_pyautogui, 
-                       locate_image_center_on_screen, 
-                       perform_click)
+from src.utils import start_pyautogui, handle_verification
 
 
 from src.selectors import (TITLE, LOCATION, SUBMIT, REMOTE_FILTER, REMOTE, LANGUAGE_FILTER, LANGUAGE_MENU)
 
 
-
-def handle_verification() -> bool:
-    """handle cloudflare verification"""
-    checkbox_image = './images/checkbox-image.png'   
-    assert Path(checkbox_image).exists()
-    attempt = 0
-    while attempt < 3:
-        if target_center := locate_image_center_on_screen(checkbox_image):
-            if perform_click(target_center.x, target_center.y):
-                print('clicked checkbox.')
-                sleep(4) # wait for page to refresh
-                if not locate_image_center_on_screen(checkbox_image):
-                    return True
-        else:
-            print('trying to locate checkbox...')
-        attempt += 1
-    return False 
 
 
 def main():
@@ -83,7 +62,7 @@ def main():
             return
         sleepy(3)
         
-        driver.type(TITLE, 'dentist')
+        driver.type(TITLE, 'lawyer')
         sleepy(2)
         driver.type(LOCATION, 'Vancouver, BC')
         sleepy(2)
