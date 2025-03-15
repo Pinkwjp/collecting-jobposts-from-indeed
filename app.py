@@ -31,8 +31,6 @@
 # pipenv run pip freeze > requirements.txt   
 
 
-import random
-
 from time import sleep
 from pathlib import Path
 
@@ -44,26 +42,14 @@ reload(locators)
 reload(selectors)
 
 
-from src.utils import get_driver
+from src.utils import get_driver, sleepy
 from src.utils import (start_pyautogui, 
                        locate_image_center_on_screen, 
                        perform_click)
 
 
-from src.locators import locator_input_job_title, locator_input_location, locator_find_job_button
-
 from src.selectors import (TITLE, LOCATION, SUBMIT, REMOTE_FILTER, REMOTE, LANGUAGE_FILTER, LANGUAGE_MENU)
 
-
-
-def more_or_less(number: int) -> float:
-    sign = random.choice([1, -1])
-    delta = random.randint(1, 100) / 1000
-    return number * (1 + sign * delta)
-
-
-def sleepy(second: int):
-    sleep(more_or_less(second))
 
 
 def handle_verification() -> bool:
@@ -97,7 +83,7 @@ def main():
             return
         sleepy(3)
         
-        driver.type(TITLE, 'accountant')
+        driver.type(TITLE, 'dentist')
         sleepy(2)
         driver.type(LOCATION, 'Vancouver, BC')
         sleepy(2)
@@ -109,5 +95,6 @@ def main():
 
 
 if __name__ == '__main__':
+    # python -m app
     main()
     
