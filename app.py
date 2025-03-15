@@ -31,21 +31,16 @@
 # pipenv run pip freeze > requirements.txt   
 
 
-
-from src import utils, pages, locators, selectors
 from importlib import reload
+
+from src import utils, pages, selectors
 reload(utils)  # make sure updates on utils funcs in effect
 reload(pages)
-reload(locators)
 reload(selectors)
-
 
 from src.utils import get_driver, sleepy
 from src.utils import start_pyautogui, handle_verification
-
-
 from src.selectors import (TITLE, LOCATION, SUBMIT, REMOTE_FILTER, REMOTE, LANGUAGE_FILTER, LANGUAGE_MENU)
-
 
 
 
@@ -54,6 +49,8 @@ def main():
     with get_driver(undetectable=True, incognito=True) as driver:  
         url = 'https://ca.indeed.com/'
         driver.uc_open_with_reconnect(url, 10)
+        sleepy(1)
+        
         driver.maximize_window()
         sleepy(5) # wait long enough for the cloudflare checkbox to appear
         
