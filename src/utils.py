@@ -11,15 +11,16 @@ import pyautogui
 
 
 
-def more_or_less(number: int) -> float:
+def more_or_less(number: float) -> float:
     sign = choice([1, -1])
     delta = randint(1, 100) / 1000
     return number * (1 + sign * delta)
 
 
-def sleepy(second: int):
+def sleepy(second: float) -> None:
     """sleep for around seond"""
     sleep(more_or_less(second))
+
 
 
 
