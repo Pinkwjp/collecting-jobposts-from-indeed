@@ -56,6 +56,16 @@ from src.selectors import (TITLE, LOCATION, SUBMIT, REMOTE_FILTER, REMOTE, LANGU
 
 
 
+def more_or_less(number: int) -> float:
+    sign = random.choice([1, -1])
+    delta = random.randint(1, 100) / 1000
+    return number * (1 + sign * delta)
+
+
+def sleepy(second: int):
+    sleep(more_or_less(second))
+
+
 def handle_verification() -> bool:
     """handle cloudflare verification"""
     checkbox_image = './images/checkbox-image.png'   
@@ -74,36 +84,25 @@ def handle_verification() -> bool:
     return False 
 
 
-def more_or_less(number: int) -> float:
-    sign = random.choice([1, -1])
-    delta = random.randint(1, 50) / 1000
-    return number * (1 + sign * delta)
-
-
-
-
-
 def main():
     start_pyautogui() 
     with get_driver(undetectable=True, incognito=True) as driver:  
         url = 'https://ca.indeed.com/'
         driver.uc_open_with_reconnect(url, 10)
         driver.maximize_window()
-        sleep(5) # wait long enough for the cloudflare checkbox to appear
+        sleepy(5) # wait long enough for the cloudflare checkbox to appear
         
         if not handle_verification():
             print('failed to handle cloudflare verification, exiting...')
             return
-        sleep(more_or_less(3))
+        sleepy(3)
         
         driver.type(TITLE, 'accountant')
-        sleep(more_or_less(2))
+        sleepy(2)
         driver.type(LOCATION, 'Vancouver, BC')
-        sleep(more_or_less(2))
+        sleepy(2)
         driver.click(SUBMIT)
-
-
-        sleep(more_or_less(10))
+        sleepy(10)
 
         # driver.click_link(link_text)
 
