@@ -50,7 +50,7 @@ def main():
         url = 'https://ca.indeed.com/'
         driver.uc_open_with_reconnect(url, 10)
         sleepy(1)
-        
+
         driver.maximize_window()
         sleepy(5) # wait long enough for the cloudflare checkbox to appear
         
@@ -59,14 +59,31 @@ def main():
             return
         sleepy(3)
         
-        driver.type(TITLE, 'lawyer')
+        # search jobs
+        driver.type(TITLE, 'accountant')  # lawyer
         sleepy(2)
         driver.type(LOCATION, 'Vancouver, BC')
         sleepy(2)
         driver.click(SUBMIT)
-        sleepy(10)
+        sleepy(3)
+        
+        # filter jobs
+        driver.click(REMOTE_FILTER)
+        sleepy(0.5)
+        driver.click(REMOTE)
+        sleepy(2)
 
-        # driver.click_link(link_text)
+        driver.click(LANGUAGE_FILTER)
+        sleepy(0.5)
+        driver.click_link('English')
+        sleepy(2)
+
+
+
+        sleepy(15)
+
+
+        
 
 
 
