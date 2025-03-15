@@ -1,10 +1,26 @@
+
+
 from time import sleep
 from contextlib import contextmanager
 from pathlib import Path
-from random import randint
+from random import randint, choice
 
 from seleniumbase import Driver
 import pyautogui
+
+
+
+
+
+def more_or_less(number: int) -> float:
+    sign = choice([1, -1])
+    delta = randint(1, 100) / 1000
+    return number * (1 + sign * delta)
+
+
+def sleepy(second: int):
+    """sleep for around seond"""
+    sleep(more_or_less(second))
 
 
 
@@ -38,7 +54,7 @@ def perform_click(x, y) -> bool:
         # click
         pyautogui.moveTo(x, y, 2, pyautogui.easeInQuad) 
         pyautogui.click()
-        print('clicked at {x}, {y}.')
+        print(f'clicked at {x}, {y}.')
         sleep(4)  # wait for web page to response
 
         # move out of the way to a random spot
