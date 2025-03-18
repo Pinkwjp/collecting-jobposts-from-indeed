@@ -33,6 +33,10 @@
 
 from importlib import reload
 
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.action_chains import ActionChains
+
+
 from src import utils, pages, selectors
 reload(utils)  # make sure updates on utils funcs in effect
 reload(pages)
@@ -40,7 +44,9 @@ reload(selectors)
 
 from src.utils import get_driver, sleepy
 from src.utils import start_pyautogui, handle_verification
-from src.selectors import (TITLE, LOCATION, SUBMIT, REMOTE_FILTER, REMOTE, LANGUAGE_FILTER, LANGUAGE_MENU)
+from src.selectors import (TITLE, LOCATION, SUBMIT, 
+                           REMOTE_FILTER, REMOTE, HYDBRID,
+                           LANGUAGE_FILTER)
 
 
 
@@ -71,19 +77,72 @@ def main():
         driver.click(REMOTE_FILTER)
         sleepy(0.5)
         driver.click(REMOTE)
-        sleepy(2)
+        sleepy(3)
 
         driver.click(LANGUAGE_FILTER)
         sleepy(0.5)
         driver.click_link('English')
+        sleepy(4)  # wait for page to full loaded
+        # self.select_option_by_text(dropdown_selector, option, dropdown_by="css selector", timeout=None)
+        
+        job_beacons = driver.find_elements("div[class='job_seen_beacon']")  # div[id='mosaic-jobResults']
+        if not job_beacons:
+            print('cannot find job becons.')
+            return
+        else:
+            print('find job becons.')
         sleepy(2)
 
-
-
-        sleepy(15)
-
-
         
+        i = 0
+        for beacon in job_beacons:
+            beacon.click()
+            print('click job beacon.')
+            sleepy(2)
+
+            # link_text_element = beacon.find_element(By.TAG_NAME, 'a')
+            # if link_text_element:
+            #     print(f'find link text element.')
+            # else:
+            #     print('cannot find link text element.')
+            # sleepy(1)
+            
+            # if not link_text_element.get_attribute('aria-label'):
+            #     print('not a valid job beacon, skipped.')
+            #     continue
+
+            # label = link_text_element.get_attribute('aria-label')
+            # if label:
+            #     print(f'find label: {label}')
+            # else:
+            #     print('cannot find label.')
+            #     continue
+            # sleepy(1)
+
+            # id = link_text_element.get_attribute('id')
+            # if id:
+            #     print(f'find id: {id}')
+            # else:
+            #     print('cannot find id.')
+            # sleepy(1)
+            
+            try:
+                actions = ActionChains(driver)
+                actions.move_to_element(beacon).click(beacon)  # scroll_to_element(beacon).
+                print('performed actions move to and click element.')
+                sleepy(2)
+                
+            except:
+                print('something wrong with actions.')
+            
+            # div[id='jobsearch-ViewjobPaneWrapper']
+
+
+            i += 1
+            if i > 5: break
+
+
+        sleepy(5)
 
 
 
