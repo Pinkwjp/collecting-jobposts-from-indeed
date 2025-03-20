@@ -66,7 +66,7 @@ def main():
         sleepy(3)
         
         # search jobs
-        driver.type(TITLE, 'accountant')  # lawyer
+        driver.type(TITLE, 'sales')  # lawyer, accountant
         sleepy(2)
         driver.type(LOCATION, 'Vancouver, BC')
         sleepy(2)
@@ -96,15 +96,15 @@ def main():
         
         i = 0
         for beacon in job_beacons:
-            beacon.click()
+            beacon.click() # somehow need this to make ActionChains function properly
             print('click job beacon.')
-            sleepy(2)
+            sleepy(1)
             
             try:
                 actions = ActionChains(driver)
                 actions.move_to_element(beacon).click(beacon)  # scroll_to_element(beacon).
                 print('performed actions: move to and click element.')
-                sleepy(2)
+                sleepy(3)
                 
                 job_detail = driver.find_element("div[id='jobsearch-ViewjobPaneWrapper']")
                 if job_detail:
