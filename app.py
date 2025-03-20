@@ -99,50 +99,29 @@ def main():
             beacon.click()
             print('click job beacon.')
             sleepy(2)
-
-            # link_text_element = beacon.find_element(By.TAG_NAME, 'a')
-            # if link_text_element:
-            #     print(f'find link text element.')
-            # else:
-            #     print('cannot find link text element.')
-            # sleepy(1)
-            
-            # if not link_text_element.get_attribute('aria-label'):
-            #     print('not a valid job beacon, skipped.')
-            #     continue
-
-            # label = link_text_element.get_attribute('aria-label')
-            # if label:
-            #     print(f'find label: {label}')
-            # else:
-            #     print('cannot find label.')
-            #     continue
-            # sleepy(1)
-
-            # id = link_text_element.get_attribute('id')
-            # if id:
-            #     print(f'find id: {id}')
-            # else:
-            #     print('cannot find id.')
-            # sleepy(1)
             
             try:
                 actions = ActionChains(driver)
                 actions.move_to_element(beacon).click(beacon)  # scroll_to_element(beacon).
-                print('performed actions move to and click element.')
+                print('performed actions: move to and click element.')
                 sleepy(2)
                 
+                job_detail = driver.find_element("div[id='jobsearch-ViewjobPaneWrapper']")
+                if job_detail:
+                    print('find job detail')
+                else:
+                    print('cannot find job detail.')
+                sleepy(1)
+
             except:
                 print('something wrong with actions.')
             
-            # div[id='jobsearch-ViewjobPaneWrapper']
-
 
             i += 1
             if i > 5: break
 
 
-        sleepy(5)
+        sleepy(8)
 
 
 
