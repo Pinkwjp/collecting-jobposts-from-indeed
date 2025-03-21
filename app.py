@@ -96,10 +96,14 @@ def main():
         
         i = 0
         for beacon in job_beacons:
+            
             beacon.click() # somehow need this to make ActionChains function properly
             print('click job beacon.')
             sleepy(1)
-            
+
+            id = beacon.find_element(By.TAG_NAME,'a').get_attribute('id')
+            assert id 
+
             try:
                 actions = ActionChains(driver)
                 actions.move_to_element(beacon).click(beacon)  # scroll_to_element(beacon).
@@ -112,6 +116,9 @@ def main():
                 else:
                     print('cannot find job detail.')
                 sleepy(1)
+
+                # element.get_attribute('innerHTML')
+
 
             except:
                 print('something wrong with actions.')
