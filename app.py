@@ -96,13 +96,9 @@ def main():
         
         i = 0
         for beacon in job_beacons:
-            
             beacon.click() # somehow need this to make ActionChains function properly
             print('click job beacon.')
             sleepy(1)
-
-            id = beacon.find_element(By.TAG_NAME,'a').get_attribute('id')
-            assert id 
 
             try:
                 actions = ActionChains(driver)
@@ -116,23 +112,34 @@ def main():
                 else:
                     print('cannot find job detail.')
                 sleepy(1)
-
-                # element.get_attribute('innerHTML')
-
+                
+                id = beacon.find_element(By.TAG_NAME,'a').get_attribute('id')
+                
+                # with open('workfile', encoding="utf-8") as f:
+                try:
+                    with open(f'./jobposts/{id}.html', 'w', encoding='utf-8') as f:
+                        f.write(job_detail.get_attribute('innerHTML'))
+                        print(f'saved jobpost {id}.')
+                except Exception as e:
+                    print(f'when trying to save jobpost, this error happended: {e}')
 
             except:
                 print('something wrong with actions.')
             
-
             i += 1
-            if i > 5: break
-
+            if i > 3: break
 
         sleepy(8)
 
+
+def lalala():
+
+    with open(f'./jobposts/lalala.txt', 'w', encoding='utf-8') as f:
+        f.write('lalala')
 
 
 if __name__ == '__main__':
     # python -m app
     main()
+    # lalala()
     
