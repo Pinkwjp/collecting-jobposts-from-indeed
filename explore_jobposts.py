@@ -20,29 +20,53 @@ assert folder.exists() and folder.is_dir()
 
 
 def main():
+
+    n = 0
     for file in folder.iterdir():
+        if n > 0: break
         print(file.name)
+
         with open(file, 'r', encoding='utf-8') as html_file:
             soup = BeautifulSoup(html_file, 'html.parser')
-            # h2[data-testid='simpler-jobTitle']
-            
-            # tag.attrs
 
-            
-            title = [h2 for h2 in soup.find_all('h2') if (h2.get('data-testid') == 'simpler-jobTitle')]
+            # title = [h2 for h2 in soup.find_all('h2') if (h2.get('data-testid') == 'simpler-jobTitle')][0].get_text()
 
-            print(title)
+            title = soup.css.select("h2[data-testid='simpler-jobTitle']")[0].get_text()
+            print(f'job title: {title}')
             print()
-            # get_text()
-            # assert h2_title
-            # print(f'job title: {h2_title.string}')
+            
+            # find(name, attrs, recursive, string, **kwargs)
+            # soup.css.select('a[href$="tillie"]')
+            
+            detail = soup.css.select("div[id='jobDetailsSection']")[0].get_text(separator=' | ')
+            print(detail)
+            print()
+            
+            # NOTE: some jobposts have not location section
+            location_list = soup.css.select("div[id='jobLocationWrapper']")
+            if location_list:
+                location = location_list[0].get_text(separator=' | ')
+                print(location)
+                print()
+            else:
+                print('no location section.')
+            print()
 
+            # NOTE: some jobposts have not benefit section
+            benefit_list = soup.css.select("div[id='benefits']")
+            if benefit_list:
+                location = benefit_list[0].get_text(separator=' | ')
+                print(location)
+            else:
+                print('no benefit section.')
+            print()
 
-            # h2_list = soup.find_all('h2')
-            # for h2 in h2_list:
-            #     if h2.get('data-testid') == 'simpler-jobTitle':
-            #         print(f'found job title: {h2.string}')
-            #     print(h2.string)
+            description = soup.css.select("div[id='jobDescriptionText']")[0].get_text(separator=' | ')
+            print(f'job description: {description}')
+            print()
+            
+
+        n += 1
 
 
 
@@ -90,8 +114,8 @@ def remove_empty_file(folder_path: str) -> None:
 if __name__ == '__main__':
     # python -m explore_jobposts
 
+    main()
     # check_it()
-    # main()
     # make_empty_file(2)
-    remove_empty_file('./jobposts/')
+    # remove_empty_file('./jobposts/')
 
