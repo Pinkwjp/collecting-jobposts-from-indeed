@@ -67,7 +67,7 @@ def main():
         sleepy(3)
         
         # search jobs
-        driver.type(TITLE, 'lawyer')  # lawyer, accountant, software developer
+        driver.type(TITLE, 'java developer')  # lawyer, accountant, software developer
         sleepy(2)
         driver.type(LOCATION, 'Vancouver, BC')
         sleepy(2)
@@ -105,11 +105,11 @@ def main():
                 actions = ActionChains(driver)
                 actions.move_to_element(beacon).click(beacon)  # scroll_to_element(beacon).
                 print('performed actions: move to and click element.')
-                sleepy(4)
+                sleepy(3)
                 
                 job_detail = driver.find_element("div[id='jobsearch-ViewjobPaneWrapper']")  # will raise error if cannot find target
                 if job_detail:
-                    print('find job detail')
+                    print('find job detail.')
                 else:
                     print('cannot find job detail.')
                 sleepy(1)
@@ -129,20 +129,38 @@ def main():
             
             i += 1
             if i > 3: break
-        
+        print()
+
         # go to next page
         try:
+            # driver.scroll_to_bottom() # not working
+
+            current_url = driver.get_current_url()
+
             next_page_button = driver.find_element("a[data-testid='pagination-page-next']") # will raise error if cannot find target
-            if not next_page_button:
-                print('cannot find next page button.')
-            else:
-                current_url = driver.get_current_url()
-                ActionChains(driver).move_to_element(next_page_button).click(next_page_button)
-                print('clicked next page')
-                sleepy(3)
-                new_url = driver.get_current_url()
-                if current_url != new_url:
-                    print('arrived at next page.')
+            next_page_button.click()
+            print('clicked next page')
+            sleepy(3)
+
+            new_url = driver.get_current_url()
+            if current_url != new_url:
+                print('arrived at next page.')
+            
+
+            # move_to_element_with_offset
+
+            
+            # if not next_page_button:
+            #     print('cannot find next page button.')
+            # else:
+            #     print('found next page button')
+            #     current_url = driver.get_current_url()
+            #     ActionChains(driver).move_to_element(next_page_button).click(next_page_button)
+            #     print('clicked next page')
+            #     sleepy(3)
+            #     new_url = driver.get_current_url()
+            #     if current_url != new_url:
+            #         print('arrived at next page.')
         except:
             print('cannot find next page button.')
 
@@ -151,15 +169,7 @@ def main():
 
 
 
-def lalala():
-
-    with open(f'./jobposts/lalala.txt', 'w', encoding='utf-8') as f:
-        f.write('lalala')
-
-
-
 if __name__ == '__main__':
     # python -m app
     main()
-    # lalala()
     
