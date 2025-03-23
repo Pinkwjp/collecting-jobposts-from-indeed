@@ -104,7 +104,7 @@ def main():
                 actions = ActionChains(driver)
                 actions.move_to_element(beacon).click(beacon)  # scroll_to_element(beacon).
                 print('performed actions: move to and click element.')
-                sleepy(3)
+                sleepy(4)
                 
                 job_detail = driver.find_element("div[id='jobsearch-ViewjobPaneWrapper']")
                 if job_detail:
