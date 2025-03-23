@@ -48,7 +48,8 @@ from src.selectors import (TITLE, LOCATION, SUBMIT,
                            REMOTE_FILTER, REMOTE, HYDBRID,
                            LANGUAGE_FILTER)
 
-
+# TODO:
+# create a class based on Driver to overwrite find_elements() and find_element() for better error handling
 
 def main():
     start_pyautogui() 
@@ -66,7 +67,7 @@ def main():
         sleepy(3)
         
         # search jobs
-        driver.type(TITLE, 'sales')  # lawyer, accountant
+        driver.type(TITLE, 'lawyer')  # lawyer, accountant, software developer
         sleepy(2)
         driver.type(LOCATION, 'Vancouver, BC')
         sleepy(2)
@@ -83,9 +84,9 @@ def main():
         sleepy(0.5)
         driver.click_link('English')
         sleepy(4)  # wait for page to full loaded
-        # self.select_option_by_text(dropdown_selector, option, dropdown_by="css selector", timeout=None)
         
-        job_beacons = driver.find_elements("div[class='job_seen_beacon']")  # div[id='mosaic-jobResults']
+        # find all job beacons on current page
+        job_beacons = driver.find_elements("div[class='job_seen_beacon']")  
         if not job_beacons:
             print('cannot find job becons.')
             return
@@ -93,7 +94,7 @@ def main():
             print('find job becons.')
         sleepy(2)
 
-        
+        # click and expand job descriptions
         i = 0
         for beacon in job_beacons:
             beacon.click() # somehow need this to make ActionChains function properly
@@ -106,7 +107,7 @@ def main():
                 print('performed actions: move to and click element.')
                 sleepy(4)
                 
-                job_detail = driver.find_element("div[id='jobsearch-ViewjobPaneWrapper']")
+                job_detail = driver.find_element("div[id='jobsearch-ViewjobPaneWrapper']")  # will raise error if cannot find target
                 if job_detail:
                     print('find job detail')
                 else:
@@ -128,14 +129,33 @@ def main():
             
             i += 1
             if i > 3: break
+        
+        # go to next page
+        try:
+            next_page_button = driver.find_element("a[data-testid='pagination-page-next']") # will raise error if cannot find target
+            if not next_page_button:
+                print('cannot find next page button.')
+            else:
+                current_url = driver.get_current_url()
+                ActionChains(driver).move_to_element(next_page_button).click(next_page_button)
+                print('clicked next page')
+                sleepy(3)
+                new_url = driver.get_current_url()
+                if current_url != new_url:
+                    print('arrived at next page.')
+        except:
+            print('cannot find next page button.')
+
 
         sleepy(8)
+
 
 
 def lalala():
 
     with open(f'./jobposts/lalala.txt', 'w', encoding='utf-8') as f:
         f.write('lalala')
+
 
 
 if __name__ == '__main__':
