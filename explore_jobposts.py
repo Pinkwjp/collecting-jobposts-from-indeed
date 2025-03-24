@@ -16,36 +16,43 @@ def main():
 
     n = 0
     for file in folder.iterdir():
-        if n > 0: break
-        print(file.name)
+        # if n > 3: break
+        print('****************************************************************************\n')
+
+        print(f'File: {file.name}\n')
 
         with open(file, 'r', encoding='utf-8') as html_file:
             soup = BeautifulSoup(html_file, 'html.parser')
             title = list(soup.css.select("h2[data-testid='simpler-jobTitle']"
                                          )[0].stripped_strings)
-            print(f'Title: \n{title}')
+            print(f'Title: \n{title}\n')
             
-            detail = list(soup.css.select("div[id='jobDetailsSection']"
-                                          )[0].stripped_strings)
-            print(f'Brief Detail: \n{detail}')
+            # NOTE: some jobposts have not detail section
+            if detail_soups := soup.css.select("div[id='jobDetailsSection']"):
+                detail = list(detail_soups[0].stripped_strings)
+                print(f'Brief Detail: \n{detail}\n')
+            else:
+                print('No Detail Section.\n')
             
             # NOTE: some jobposts have not location section
             if location_soups := soup.css.select("div[id='jobLocationWrapper']"):
                 location = list(location_soups[0].stripped_strings)
-                print(f'Location: \n{location}')
+                print(f'Location: \n{location}\n')
             else:
-                print('No Location Section.')
+                print('No Location Section.\n')
 
             # NOTE: some jobposts have not benefit section
             if benefit_soups := soup.css.select("div[id='benefits']"):
                 benefit = list(benefit_soups[0].stripped_strings)
-                print(benefit)
+                print(f'Benefit: \n{benefit}\n')
             else:
                 print('no benefit section.')
 
             description = list(soup.css.select("div[id='jobDescriptionText']"
                                                )[0].stripped_strings)
-            print(f'Job Description:\n {description}')
+            print(f'Job Description:\n {description}\n')
+
+        print('****************************************************************************\n')
             
 
         n += 1
