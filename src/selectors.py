@@ -2,9 +2,9 @@
 
 
 # search
-TITLE = "input[id='text-input-what']"
-LOCATION = "input[id='text-input-where']"
-SUBMIT = "button[type='submit']"
+SEARCH_TITLE = "input[id='text-input-what']"
+SEARCH_LOCATION = "input[id='text-input-where']"
+SEARCH_SUBMIT = "button[type='submit']"
 
 # results
 RESULTS = "div[id='mosaic-jobResults']"

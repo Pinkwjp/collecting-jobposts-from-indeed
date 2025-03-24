@@ -44,7 +44,7 @@ reload(selectors)
 
 from src.utils import get_driver, sleepy
 from src.utils import start_pyautogui, handle_verification
-from src.selectors import (TITLE, LOCATION, SUBMIT, 
+from src.selectors import (SEARCH_TITLE, SEARCH_LOCATION, SEARCH_SUBMIT, 
                            REMOTE_FILTER, REMOTE, HYDBRID,
                            LANGUAGE_FILTER)
 
@@ -67,11 +67,11 @@ def main():
         sleepy(3)
         
         # search jobs
-        driver.type(TITLE, 'java developer')  # lawyer, accountant, software developer
+        driver.type(SEARCH_TITLE, 'java developer')  # lawyer, accountant, software developer
         sleepy(2)
-        driver.type(LOCATION, 'Vancouver, BC')
+        driver.type(SEARCH_LOCATION, 'Vancouver, BC')
         sleepy(2)
-        driver.click(SUBMIT)
+        driver.click(SEARCH_SUBMIT)
         sleepy(3)
         
         # filter jobs
@@ -148,8 +148,8 @@ def main():
             
 
             # move_to_element_with_offset
+            # scroll_to_element
 
-            
             # if not next_page_button:
             #     print('cannot find next page button.')
             # else:
