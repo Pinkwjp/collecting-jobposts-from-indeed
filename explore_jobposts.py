@@ -1,15 +1,19 @@
 
-
+from importlib import reload
 import random, string, os
 from pathlib import Path
 from typing import Union, List
 
 from bs4 import BeautifulSoup
 
+from src import selectors
+reload(selectors)
+from src.selectors import (JOB_DETAILS, JOB_BENEFIT, JOB_TITLE, JOB_DESCRIPTION, JOB_LOCATION)
+
+
 
 folder = Path('./jobposts/')
 assert folder.exists() and folder.is_dir()
-
 
 
 
@@ -33,26 +37,19 @@ def main():
         with open(file, 'r', encoding='utf-8') as html_file:
             soup = BeautifulSoup(html_file, 'html.parser')
 
-            JOB_TITLE = "h2[data-testid='simpler-jobTitle']"
             print(f'Title: \n{extract_stripped_strings(soup, JOB_TITLE)}\n')
             
-            css_job_detail = "div[id='jobDetailsSection']"  # NOTE: some jobposts have not detail section
-            if detail := extract_stripped_strings(soup, css_job_detail):
-                print(f'Brief Detail: \n{detail}\n')
+            if details := extract_stripped_strings(soup, JOB_DETAILS):  # NOTE: some jobposts have not detail section
+                print(f'Brief Detail: \n{details}\n')
 
-            
-            css_location = "div[id='jobLocationWrapper']"  # NOTE: some jobposts have not location section
-            if location := extract_stripped_strings(soup, css_location):
+            if location := extract_stripped_strings(soup, JOB_LOCATION):  # NOTE: some jobposts have not location section
                 print(f'Location: \n{location}\n')
 
-            
-            css_benefit = "div[id='benefits']"  # NOTE: some jobposts have not benefit section
-            if benefit := extract_stripped_strings(soup, css_benefit):
+            if benefit := extract_stripped_strings(soup, JOB_BENEFIT):  # NOTE: some jobposts have not benefit section
                 print(f'Benefit: \n{benefit}\n')
 
-            css_description = "div[id='jobDescriptionText']"
-            if description := extract_stripped_strings(soup, css_description):
-                print(f'Job Description:\n {description}\n')
+            print(f'Job Description:\n {extract_stripped_strings(soup, JOB_DESCRIPTION)}\n')
+            
         print('*' * 100, '\n')
 
 
