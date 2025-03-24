@@ -19,62 +19,41 @@ def extract_stripped_strings(soup: BeautifulSoup, css_selector: str) -> Union[Li
     if sub_soups := soup.css.select(css_selector):
         return list(sub_soups[0].stripped_strings)  # 1 or none
     else:
+        print(f'No --- {css_selector} --- found.\n')
         return None
 
 
 
 def main():
 
-    n = 0
-    for file in folder.iterdir():
-        # if n > 3: break
-        print('****************************************************************************\n')
-
+    for i, file in enumerate(folder.iterdir()):
+        # if i > 3: break
+        print('*' * 100, '\n')
         print(f'File: {file.name}\n')
-
         with open(file, 'r', encoding='utf-8') as html_file:
             soup = BeautifulSoup(html_file, 'html.parser')
             title = list(soup.css.select("h2[data-testid='simpler-jobTitle']"
                                          )[0].stripped_strings)
             print(f'Title: \n{title}\n')
             
-            # NOTE: some jobposts have not detail section
-            # if detail_soups := soup.css.select("div[id='jobDetailsSection']"):
-            #     detail = list(detail_soups[0].stripped_strings)
-            #     print(f'Brief Detail: \n{detail}\n')
-            # else:
-            #     print('No Detail Section.\n')
-            
-            css_job_detail = "div[id='jobDetailsSection']"
+            css_job_detail = "div[id='jobDetailsSection']"  # NOTE: some jobposts have not detail section
             if detail := extract_stripped_strings(soup, css_job_detail):
                 print(f'Brief Detail: \n{detail}\n')
-            else:
-                print(f'No --- {css_job_detail} --- found.\n')
 
-
-            # NOTE: some jobposts have not location section
-            if location_soups := soup.css.select("div[id='jobLocationWrapper']"):
-                location = list(location_soups[0].stripped_strings)
-                print(f'Location: \n{location}\n')
-            else:
-                print('No Location Section.\n')
-
-            # NOTE: some jobposts have not benefit section
-            if benefit_soups := soup.css.select("div[id='benefits']"):
-                benefit = list(benefit_soups[0].stripped_strings)
-                print(f'Benefit: \n{benefit}\n')
-            else:
-                print('no benefit section.')
-
-            description = list(soup.css.select("div[id='jobDescriptionText']"
-                                               )[0].stripped_strings)
-            print(f'Job Description:\n {description}\n')
-
-        print('****************************************************************************\n')
             
+            css_location = "div[id='jobLocationWrapper']"  # NOTE: some jobposts have not location section
+            if location := extract_stripped_strings(soup, css_location):
+                print(f'Location: \n{location}\n')
 
-        n += 1
+            
+            css_benefit = "div[id='benefits']"  # NOTE: some jobposts have not benefit section
+            if benefit := extract_stripped_strings(soup, css_benefit):
+                print(f'Benefit: \n{benefit}\n')
 
+            css_description = "div[id='jobDescriptionText']"
+            if description := extract_stripped_strings(soup, css_description):
+                print(f'Job Description:\n {description}\n')
+        print('*' * 100, '\n')
 
 
 
