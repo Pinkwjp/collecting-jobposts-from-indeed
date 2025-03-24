@@ -1,14 +1,25 @@
 
 
 import random, string, os
-
 from pathlib import Path
+from typing import Union, List
 
 from bs4 import BeautifulSoup
 
 
 folder = Path('./jobposts/')
 assert folder.exists() and folder.is_dir()
+
+
+
+
+def extract_stripped_strings(soup: BeautifulSoup, css_selector: str) -> Union[List[str], None]:
+    """assuming css_selector correspons to NO MORE THAN ONE element"""
+
+    if sub_soups := soup.css.select(css_selector):
+        return list(sub_soups[0].stripped_strings)  # 1 or none
+    else:
+        return None
 
 
 
@@ -28,12 +39,19 @@ def main():
             print(f'Title: \n{title}\n')
             
             # NOTE: some jobposts have not detail section
-            if detail_soups := soup.css.select("div[id='jobDetailsSection']"):
-                detail = list(detail_soups[0].stripped_strings)
+            # if detail_soups := soup.css.select("div[id='jobDetailsSection']"):
+            #     detail = list(detail_soups[0].stripped_strings)
+            #     print(f'Brief Detail: \n{detail}\n')
+            # else:
+            #     print('No Detail Section.\n')
+            
+            css_job_detail = "div[id='jobDetailsSection']"
+            if detail := extract_stripped_strings(soup, css_job_detail):
                 print(f'Brief Detail: \n{detail}\n')
             else:
-                print('No Detail Section.\n')
-            
+                print(f'No --- {css_job_detail} --- found.\n')
+
+
             # NOTE: some jobposts have not location section
             if location_soups := soup.css.select("div[id='jobLocationWrapper']"):
                 location = list(location_soups[0].stripped_strings)
