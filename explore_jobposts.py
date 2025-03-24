@@ -32,9 +32,9 @@ def main():
         print(f'File: {file.name}\n')
         with open(file, 'r', encoding='utf-8') as html_file:
             soup = BeautifulSoup(html_file, 'html.parser')
-            title = list(soup.css.select("h2[data-testid='simpler-jobTitle']"
-                                         )[0].stripped_strings)
-            print(f'Title: \n{title}\n')
+
+            JOB_TITLE = "h2[data-testid='simpler-jobTitle']"
+            print(f'Title: \n{extract_stripped_strings(soup, JOB_TITLE)}\n')
             
             css_job_detail = "div[id='jobDetailsSection']"  # NOTE: some jobposts have not detail section
             if detail := extract_stripped_strings(soup, css_job_detail):
