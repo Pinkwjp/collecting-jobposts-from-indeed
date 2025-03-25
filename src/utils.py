@@ -17,7 +17,7 @@ def more_or_less(number: float) -> float:
     return number * (1 + sign * delta)
 
 
-def sleepy(second: float) -> None:
+def slow_down(second: float) -> None:
     """sleep for around seond"""
     sleep(more_or_less(second))
 

@@ -38,11 +38,11 @@ from selenium.webdriver.common.action_chains import ActionChains
 
 
 from src import utils, pages, selectors
-reload(utils)  # make sure updates on utils funcs in effect
+reload(utils)  
 reload(pages)
 reload(selectors)
 
-from src.utils import get_driver, sleepy
+from src.utils import get_driver, slow_down
 from src.utils import start_pyautogui, handle_verification
 from src.selectors import (SEARCH_TITLE, SEARCH_LOCATION, SEARCH_SUBMIT, 
                            REMOTE_FILTER, REMOTE, HYDBRID,
@@ -51,39 +51,40 @@ from src.selectors import (SEARCH_TITLE, SEARCH_LOCATION, SEARCH_SUBMIT,
 # TODO:
 # create a class based on Driver to overwrite find_elements() and find_element() for better error handling
 
+
 def main():
     start_pyautogui() 
     with get_driver(undetectable=True, incognito=True) as driver:  
         url = 'https://ca.indeed.com/'
         driver.uc_open_with_reconnect(url, 10)
-        sleepy(1)
+        slow_down(1)
 
         driver.maximize_window()
-        sleepy(5) # wait long enough for the cloudflare checkbox to appear
+        slow_down(5) # wait long enough for the cloudflare checkbox to appear
         
         if not handle_verification():
             print('failed to handle cloudflare verification, exiting...')
             return
-        sleepy(3)
+        slow_down(3)
         
         # search jobs
-        driver.type(SEARCH_TITLE, 'java developer')  # lawyer, accountant, software developer
-        sleepy(2)
+        driver.type(SEARCH_TITLE, 'software developer')  # lawyer, accountant, software developer, java developer
+        slow_down(2)
         driver.type(SEARCH_LOCATION, 'Vancouver, BC')
-        sleepy(2)
+        slow_down(2)
         driver.click(SEARCH_SUBMIT)
-        sleepy(3)
+        slow_down(3)
         
         # filter jobs
         driver.click(REMOTE_FILTER)
-        sleepy(0.5)
+        slow_down(0.5)
         driver.click(REMOTE)
-        sleepy(3)
+        slow_down(3)
 
         driver.click(LANGUAGE_FILTER)
-        sleepy(0.5)
+        slow_down(0.5)
         driver.click_link('English')
-        sleepy(4)  # wait for page to full loaded
+        slow_down(4)  # wait for page to full loaded
         
         # find all job beacons on current page
         job_beacons = driver.find_elements("div[class='job_seen_beacon']")  
@@ -92,33 +93,33 @@ def main():
             return
         else:
             print('find job becons.')
-        sleepy(2)
+        slow_down(2)
 
         # click and expand job descriptions
         i = 0
         for beacon in job_beacons:
             beacon.click() # somehow need this to make ActionChains function properly
             print('click job beacon.')
-            sleepy(1)
+            slow_down(1)
 
             try:
                 actions = ActionChains(driver)
                 actions.move_to_element(beacon).click(beacon)  # scroll_to_element(beacon).
                 print('performed actions: move to and click element.')
-                sleepy(3)
+                slow_down(3)
                 
                 job_detail = driver.find_element("div[id='jobsearch-ViewjobPaneWrapper']")  # will raise error if cannot find target
                 if job_detail:
                     print('find job detail.')
                 else:
                     print('cannot find job detail.')
-                sleepy(1)
+                slow_down(1)
                 
                 id = beacon.find_element(By.TAG_NAME,'a').get_attribute('id')
                 
                 # with open('workfile', encoding="utf-8") as f:
                 try:
-                    with open(f'./jobposts/{id}.html', 'w', encoding='utf-8') as f:
+                    with open(f'./jobposts/mar-24/{id}.html', 'w', encoding='utf-8') as f:
                         f.write(job_detail.get_attribute('innerHTML'))
                         print(f'saved jobpost {id}.')
                 except Exception as e:
@@ -140,7 +141,7 @@ def main():
             next_page_button = driver.find_element("a[data-testid='pagination-page-next']") # will raise error if cannot find target
             next_page_button.click()
             print('clicked next page')
-            sleepy(3)
+            slow_down(3)
 
             new_url = driver.get_current_url()
             if current_url != new_url:
@@ -165,7 +166,7 @@ def main():
             print('cannot find next page button.')
 
 
-        sleepy(8)
+        slow_down(8)
 
 
 
