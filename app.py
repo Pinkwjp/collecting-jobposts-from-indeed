@@ -33,6 +33,8 @@
 
 from importlib import reload
 
+from seleniumbase import Driver
+
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
 
@@ -46,10 +48,81 @@ from src.utils import get_driver, slow_down
 from src.utils import start_pyautogui, handle_verification
 from src.selectors import (SEARCH_TITLE, SEARCH_LOCATION, SEARCH_SUBMIT, 
                            REMOTE_FILTER, REMOTE, HYDBRID,
-                           LANGUAGE_FILTER)
+                           LANGUAGE_FILTER, JOB_BEACON)
 
 # TODO:
 # create a class based on Driver to overwrite find_elements() and find_element() for better error handling
+
+
+class Collector:
+
+    def __init__(self, driver: Driver, url: str) -> None:
+        self.driver = driver
+        self.url = url
+    
+    def open_webpage(self) -> None:
+        self.driver.uc_open_with_reconnect(self.url, 10)
+        slow_down(2)
+        self.driver.maximize_window()
+        slow_down(5) # wait long enough for the cloudflare checkbox to appear
+
+    def search_jobs(self, job_title: str, job_location: str) -> None:
+        self.driver.type(SEARCH_TITLE, job_title)  
+        slow_down(2)
+        self.driver.type(SEARCH_LOCATION, job_location)
+        slow_down(2)
+        self.driver.click(SEARCH_SUBMIT)
+        slow_down(3)
+
+    def filter_jobs(self) -> None:
+        self.driver.click(REMOTE_FILTER)
+        slow_down(0.5)
+        self.driver.click(REMOTE)
+        slow_down(3)
+        self.driver.click(LANGUAGE_FILTER)
+        slow_down(0.5)
+        self.driver.click_link('English')
+        slow_down(4)  # wait for page to full loaded
+
+    def collect_jobposts(self) -> None:
+        # find all job beacons on current page
+        job_beacons = self.driver.find_elements(JOB_BEACON)  
+        slow_down(2)
+        # click and expand job descriptions
+        i = 0
+        for beacon in job_beacons:
+            beacon.click() # somehow need this to make ActionChains function properly
+            print('click job beacon.')
+            slow_down(1)
+
+            try:
+                actions = ActionChains(driver)
+                actions.move_to_element(beacon).click(beacon)  # scroll_to_element(beacon).
+                print('performed actions: move to and click element.')
+                slow_down(3)
+                
+                job_detail = driver.find_element("div[id='jobsearch-ViewjobPaneWrapper']")  # will raise error if cannot find target
+                if job_detail:
+                    print('find job detail.')
+                else:
+                    print('cannot find job detail.')
+                slow_down(1)
+                
+                id = beacon.find_element(By.TAG_NAME,'a').get_attribute('id')
+                
+                # with open('workfile', encoding="utf-8") as f:
+                try:
+                    with open(f'./jobposts/mar-24/{id}.html', 'w', encoding='utf-8') as f:
+                        f.write(job_detail.get_attribute('innerHTML'))
+                        print(f'saved jobpost {id}.')
+                except Exception as e:
+                    print(f'when trying to save jobpost, this error happended: {e}')
+
+            except:
+                print('something wrong with actions.')
+            
+            i += 1
+            if i > 3: break
 
 
 def main():
@@ -68,7 +141,7 @@ def main():
         slow_down(3)
         
         # search jobs
-        driver.type(SEARCH_TITLE, 'software developer')  # lawyer, accountant, software developer, java developer
+        driver.type(SEARCH_TITLE, 'accountant')  # lawyer, accountant, software developer, java developer
         slow_down(2)
         driver.type(SEARCH_LOCATION, 'Vancouver, BC')
         slow_down(2)
@@ -80,12 +153,13 @@ def main():
         slow_down(0.5)
         driver.click(REMOTE)
         slow_down(3)
-
         driver.click(LANGUAGE_FILTER)
         slow_down(0.5)
         driver.click_link('English')
         slow_down(4)  # wait for page to full loaded
         
+
+
         # find all job beacons on current page
         job_beacons = driver.find_elements("div[class='job_seen_beacon']")  
         if not job_beacons:
@@ -131,6 +205,8 @@ def main():
             i += 1
             if i > 3: break
         print()
+
+
 
         # go to next page
         try:
