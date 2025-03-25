@@ -83,25 +83,62 @@ class Collector:
         slow_down(0.5)
         self.driver.click_link('English')
         slow_down(4)  # wait for page to full loaded
+    
+    def _expand_job_description(self, job_beacon) -> None:
+        job_beacon.click()  # somehow need this to make ActionChains function properly
+        slow_down(2)
+        print('click job beacon.')
+
+        actions = ActionChains(self.driver)
+        actions.move_to_element(job_beacon).click(job_beacon)  # to make job post shown on screen
+        print('performed actions: move to and click element.')
+        slow_down(3)
+    
+    
+    def xxxxxxxxxxxxxx _download_job_description(self, folder, file_name) -> None:
+        """download the currently expanded job description"""
+        job_detail = self.driver.find_element("div[id='jobsearch-ViewjobPaneWrapper']")  # will raise error if cannot find target
+        if job_detail:
+            print('find job detail.')
+        else:
+            print('cannot find job detail.')
+        slow_down(1)
+        
+        id = beacon.find_element(By.TAG_NAME,'a').get_attribute('id')
+        
+        # with open('workfile', encoding="utf-8") as f:
+        try:
+            with open(f'./jobposts/mar-24/{id}.html', 'w', encoding='utf-8') as f:
+                f.write(job_detail.get_attribute('innerHTML'))
+                print(f'saved jobpost {id}.')
+        except Exception as e:
+            print(f'when trying to save jobpost, this error happended: {e}')
+
 
     def collect_jobposts(self) -> None:
         # find all job beacons on current page
         job_beacons = self.driver.find_elements(JOB_BEACON)  
         slow_down(2)
-        # click and expand job descriptions
-        i = 0
-        for beacon in job_beacons:
-            beacon.click() # somehow need this to make ActionChains function properly
-            print('click job beacon.')
-            slow_down(1)
 
+        # click and expand job descriptions
+        for i, job_beacon in enumerate(job_beacons):
+            
+            self._expand_job_description(job_beacon)
+
+
+            beacon.click()  # somehow need this to make ActionChains function properly
+            slow_down(2)
+            print('click job beacon.')
+            
             try:
-                actions = ActionChains(driver)
-                actions.move_to_element(beacon).click(beacon)  # scroll_to_element(beacon).
+                actions = ActionChains(self.driver)
+                actions.move_to_element(beacon).click(beacon)  # to make job post shown
                 print('performed actions: move to and click element.')
                 slow_down(3)
                 
-                job_detail = driver.find_element("div[id='jobsearch-ViewjobPaneWrapper']")  # will raise error if cannot find target
+
+
+                job_detail = self.driver.find_element("div[id='jobsearch-ViewjobPaneWrapper']")  # will raise error if cannot find target
                 if job_detail:
                     print('find job detail.')
                 else:
@@ -123,6 +160,10 @@ class Collector:
             
             i += 1
             if i > 3: break
+
+
+
+
 
 
 def main():
