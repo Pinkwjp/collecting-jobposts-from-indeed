@@ -8,6 +8,8 @@ SEARCH_SUBMIT = "button[type='submit']"
 
 # results
 RESULTS = "div[id='mosaic-jobResults']"
+JOB_BEACON = "div[class='job_seen_beacon']"
+FULL_JOB_DETAIL = "div[id='jobsearch-ViewjobPaneWrapper']"
 
 # remote filter
 REMOTE_FILTER = "button[id='remote_filter_button']"
