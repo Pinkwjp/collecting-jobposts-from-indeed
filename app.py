@@ -32,6 +32,7 @@
 
 
 from importlib import reload
+from pathlib import Path
 
 from seleniumbase import Driver
 
@@ -48,7 +49,7 @@ from src.utils import get_driver, slow_down
 from src.utils import start_pyautogui, handle_verification
 from src.selectors import (SEARCH_TITLE, SEARCH_LOCATION, SEARCH_SUBMIT, 
                            REMOTE_FILTER, REMOTE, HYDBRID,
-                           LANGUAGE_FILTER, JOB_BEACON)
+                           LANGUAGE_FILTER, JOB_BEACON, FULL_JOB_DETAIL)
 
 # TODO:
 # create a class based on Driver to overwrite find_elements() and find_element() for better error handling
@@ -65,6 +66,8 @@ class Collector:
         slow_down(2)
         self.driver.maximize_window()
         slow_down(5) # wait long enough for the cloudflare checkbox to appear
+        handle_verification()
+        slow_down(1)
 
     def search_jobs(self, job_title: str, job_location: str) -> None:
         self.driver.type(SEARCH_TITLE, job_title)  
@@ -82,7 +85,7 @@ class Collector:
         self.driver.click(LANGUAGE_FILTER)
         slow_down(0.5)
         self.driver.click_link('English')
-        slow_down(4)  # wait for page to full loaded
+        slow_down(5)  # wait for page to full loaded
     
     def _expand_job_description(self, job_beacon) -> None:
         job_beacon.click()  # somehow need this to make ActionChains function properly
@@ -95,71 +98,50 @@ class Collector:
         slow_down(3)
     
     
-    def xxxxxxxxxxxxxx _download_job_description(self, folder, file_name) -> None:
+    def _download_full_job_detail(self, folder, job_beacon) -> None:
         """download the currently expanded job description"""
-        job_detail = self.driver.find_element("div[id='jobsearch-ViewjobPaneWrapper']")  # will raise error if cannot find target
-        if job_detail:
-            print('find job detail.')
-        else:
-            print('cannot find job detail.')
-        slow_down(1)
+        # slow_down(2)
         
-        id = beacon.find_element(By.TAG_NAME,'a').get_attribute('id')
+        # try:
+        #     job_id = job_beacon.find_element(By.TAG_NAME,'a').get_attribute('id')
+        # except:
+        #     print('error: failed to find job id')
         
-        # with open('workfile', encoding="utf-8") as f:
+        # try:
+        #     full_job_detail = self.driver.find_element(FULL_JOB_DETAIL)  # will raise error if cannot find target
+        # except:
+        #     print('error: failed to find full job detail')
+
+        # if job_id and full_job_detail:
+        #     try:
+        #         with open(f'{folder}/{job_id}.html', 'w', encoding='utf-8') as f:
+        #             f.write(full_job_detail.get_attribute('innerHTML'))
+        #             print(f'saved jobpost {job_id}.')
+        #     except:
+        #         print('error: failed to download.')
+
         try:
-            with open(f'./jobposts/mar-24/{id}.html', 'w', encoding='utf-8') as f:
-                f.write(job_detail.get_attribute('innerHTML'))
-                print(f'saved jobpost {id}.')
-        except Exception as e:
-            print(f'when trying to save jobpost, this error happended: {e}')
+            job_id = job_beacon.find_element(By.TAG_NAME,'a').get_attribute('id')
+            full_job_detail = self.driver.find_element(FULL_JOB_DETAIL)  # will raise error if cannot find target
+
+            with open(f'{folder}/{job_id}.html', 'w', encoding='utf-8') as f:
+                f.write(full_job_detail.get_attribute('innerHTML'))
+                print(f'saved jobpost {job_id}.')
+        except:
+            print('error: failed to download.')
 
 
-    def collect_jobposts(self) -> None:
+    def collect_jobposts(self, folder: str) -> None:
         # find all job beacons on current page
+        assert Path(folder).exists() and Path(folder).is_dir()
+
         job_beacons = self.driver.find_elements(JOB_BEACON)  
-        slow_down(2)
-
-        # click and expand job descriptions
         for i, job_beacon in enumerate(job_beacons):
-            
-            self._expand_job_description(job_beacon)
-
-
-            beacon.click()  # somehow need this to make ActionChains function properly
             slow_down(2)
-            print('click job beacon.')
+            self._expand_job_description(job_beacon)
+            self._download_full_job_detail(folder, job_beacon)
             
-            try:
-                actions = ActionChains(self.driver)
-                actions.move_to_element(beacon).click(beacon)  # to make job post shown
-                print('performed actions: move to and click element.')
-                slow_down(3)
-                
-
-
-                job_detail = self.driver.find_element("div[id='jobsearch-ViewjobPaneWrapper']")  # will raise error if cannot find target
-                if job_detail:
-                    print('find job detail.')
-                else:
-                    print('cannot find job detail.')
-                slow_down(1)
-                
-                id = beacon.find_element(By.TAG_NAME,'a').get_attribute('id')
-                
-                # with open('workfile', encoding="utf-8") as f:
-                try:
-                    with open(f'./jobposts/mar-24/{id}.html', 'w', encoding='utf-8') as f:
-                        f.write(job_detail.get_attribute('innerHTML'))
-                        print(f'saved jobpost {id}.')
-                except Exception as e:
-                    print(f'when trying to save jobpost, this error happended: {e}')
-
-            except:
-                print('something wrong with actions.')
-            
-            i += 1
-            if i > 3: break
+            if i > 2: break
 
 
 
@@ -287,7 +269,30 @@ def main():
 
 
 
+
+
+def main_x():
+    start_pyautogui() 
+    with get_driver(undetectable=True, incognito=True) as driver:  
+
+        collector = Collector(driver, 'https://ca.indeed.com/')
+        collector.open_webpage()
+        collector.search_jobs(job_title='accountant', job_location='Toronto, ON')
+        collector.filter_jobs()
+        folder = './jobposts/test/'
+        assert Path(folder).exists() and Path(folder).is_dir()
+        collector.collect_jobposts(folder='./jobposts/test/')
+
+
+        slow_down(8)
+
+
+
 if __name__ == '__main__':
     # python -m app
-    main()
+
+    # main()
+    main_x()
+
+
     
