@@ -100,35 +100,11 @@ class Collector:
     
     def _download_full_job_detail(self, folder, job_beacon) -> None:
         """download the currently expanded job description"""
-        # slow_down(2)
-        
-        # try:
-        #     job_id = job_beacon.find_element(By.TAG_NAME,'a').get_attribute('id')
-        # except:
-        #     print('error: failed to find job id')
-        
-        # try:
-        #     full_job_detail = self.driver.find_element(FULL_JOB_DETAIL)  # will raise error if cannot find target
-        # except:
-        #     print('error: failed to find full job detail')
-
-        # if job_id and full_job_detail:
-        #     try:
-        #         with open(f'{folder}/{job_id}.html', 'w', encoding='utf-8') as f:
-        #             f.write(full_job_detail.get_attribute('innerHTML'))
-        #             print(f'saved jobpost {job_id}.')
-        #     except:
-        #         print('error: failed to download.')
-
-        try:
-            job_id = job_beacon.find_element(By.TAG_NAME,'a').get_attribute('id')
-            full_job_detail = self.driver.find_element(FULL_JOB_DETAIL)  # will raise error if cannot find target
-
-            with open(f'{folder}/{job_id}.html', 'w', encoding='utf-8') as f:
-                f.write(full_job_detail.get_attribute('innerHTML'))
-                print(f'saved jobpost {job_id}.')
-        except:
-            print('error: failed to download.')
+        job_id = job_beacon.find_element(By.TAG_NAME,'a').get_attribute('id')
+        full_job_detail = self.driver.find_element(FULL_JOB_DETAIL)  # will raise error if cannot find target
+        with open(f'{folder}/{job_id}.html', 'w', encoding='utf-8') as f:
+            f.write(full_job_detail.get_attribute('innerHTML'))
+            print(f'saved jobpost {job_id}.')
 
 
     def collect_jobposts(self, folder: str) -> None:
@@ -277,7 +253,7 @@ def main_x():
 
         collector = Collector(driver, 'https://ca.indeed.com/')
         collector.open_webpage()
-        collector.search_jobs(job_title='accountant', job_location='Toronto, ON')
+        collector.search_jobs(job_title='accountant', job_location='Vancouver, BC')
         collector.filter_jobs()
         folder = './jobposts/test/'
         assert Path(folder).exists() and Path(folder).is_dir()
