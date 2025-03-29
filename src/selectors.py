@@ -10,6 +10,7 @@ SEARCH_SUBMIT = "button[type='submit']"
 RESULTS = "div[id='mosaic-jobResults']"
 JOB_BEACON = "div[class='job_seen_beacon']"
 FULL_JOB_DETAIL = "div[id='jobsearch-ViewjobPaneWrapper']"
+NEXT_PAGE = "a[data-testid='pagination-page-next']"
 
 # remote filter
 REMOTE_FILTER = "button[id='remote_filter_button']"
@@ -28,4 +29,5 @@ JOB_DETAILS = "div[id='jobDetailsSection']"
 JOB_LOCATION = "div[id='jobLocationWrapper']" 
 JOB_BENEFIT = "div[id='benefits']"
 JOB_DESCRIPTION = "div[id='jobDescriptionText']"
+
 
