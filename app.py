@@ -48,11 +48,9 @@ reload(selectors)
 from src.utils import get_driver, slow_down
 from src.utils import start_pyautogui, handle_verification
 from src.selectors import (SEARCH_TITLE, SEARCH_LOCATION, SEARCH_SUBMIT, 
-                           REMOTE_FILTER, REMOTE, HYDBRID,
+                           REMOTE_FILTER, REMOTE, HYDBRID, NEXT_PAGE,
                            LANGUAGE_FILTER, JOB_BEACON, FULL_JOB_DETAIL)
 
-# TODO:
-# create a class based on Driver to overwrite find_elements() and find_element() for better error handling
 
 
 class Collector:
@@ -119,6 +117,19 @@ class Collector:
             
             if i > 2: break
 
+
+    def go_to_next_page(self) -> bool:
+        try:
+            url = self.driver.get_current_url()
+            self.driver.find_element(NEXT_PAGE).click()
+            print('clicked next page button')
+            slow_down(3)
+            if url != self.driver.get_current_url():
+                print('arrived at next page.')
+            return True
+        except:
+            print('error: failed to go to next page.')
+            return False
 
 
 
@@ -248,18 +259,17 @@ def main():
 
 
 def main_x():
+    download_folder = './jobposts/test/'
+    assert Path(download_folder).exists() and Path(download_folder).is_dir()
+
     start_pyautogui() 
     with get_driver(undetectable=True, incognito=True) as driver:  
-
         collector = Collector(driver, 'https://ca.indeed.com/')
         collector.open_webpage()
-        collector.search_jobs(job_title='accountant', job_location='Vancouver, BC')
-        collector.filter_jobs()
-        folder = './jobposts/test/'
-        assert Path(folder).exists() and Path(folder).is_dir()
-        collector.collect_jobposts(folder='./jobposts/test/')
-
-
+        collector.search_jobs(job_title='cybersecurity', job_location='Toronto, ON') # cybersecurity, accountant,  
+        # collector.filter_jobs()
+        collector.collect_jobposts(folder=download_folder)
+        collector.go_to_next_page()
         slow_down(8)
 
 
