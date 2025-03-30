@@ -12,9 +12,6 @@ from src.selectors import (JOB_DETAILS, JOB_BENEFIT, JOB_TITLE, JOB_DESCRIPTION,
 
 
 
-folder = Path('./jobposts/')
-assert folder.exists() and folder.is_dir()
-
 
 
 def extract_stripped_strings(soup: BeautifulSoup, css_selector: str) -> Union[List[str], None]:
@@ -27,11 +24,34 @@ def extract_stripped_strings(soup: BeautifulSoup, css_selector: str) -> Union[Li
         return None
 
 
+def make_empty_file(n:int = 1):
+    folder = Path('./jobposts/')
+    assert folder.is_dir()
+    for _ in range(n):
+        file_name = ''.join(random.choices(population=string.digits + string.ascii_lowercase, 
+                                        k=10)
+                            ) + '.html'
+        with open(folder / file_name, mode='x') as f:
+            pass 
+
+
+def remove_empty_file(folder_path: str) -> None:
+    folder = Path(folder_path)
+    assert folder.exists() and folder.is_dir()
+    n = 0
+    for file in folder.iterdir():
+        if os.stat(file).st_size == 0:
+            os.remove(file) 
+            n += 1
+    print(f'removed {n} empty file in {folder.absolute()}.')
+    
 
 def main():
+    folder = Path('./jobposts/')
+    assert folder.exists() and folder.is_dir()
 
     for i, file in enumerate(folder.iterdir()):
-        # if i > 3: break
+        if i > 2: break
         print('*' * 100, '\n')
         print(f'File: {file.name}\n')
         with open(file, 'r', encoding='utf-8') as html_file:
@@ -54,33 +74,13 @@ def main():
 
 
 
-def make_empty_file(n:int = 1):
-    folder = Path('./jobposts/')
-    assert folder.is_dir()
-    for _ in range(n):
-        file_name = ''.join(random.choices(population=string.digits + string.ascii_lowercase, 
-                                        k=10)
-                            ) + '.html'
-        with open(folder / file_name, mode='x') as f:
-            pass 
-
-
-def remove_empty_file(folder_path: str) -> None:
-    folder = Path(folder_path)
-    assert folder.exists() and folder.is_dir()
-    n = 0
-    for file in folder.iterdir():
-        if os.stat(file).st_size == 0:
-            os.remove(file) 
-            n += 1
-    print(f'removed {n} file in {folder.absolute()}.')
-    
-
-
 if __name__ == '__main__':
     # python -m explore_jobposts
 
+    remove_empty_file('./jobposts/')
     main()
     # make_empty_file(2)
-    # remove_empty_file('./jobposts/')
+    
+
+
 
