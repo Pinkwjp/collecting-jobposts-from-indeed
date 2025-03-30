@@ -74,36 +74,69 @@ class Collector:
         slow_down(2)
         self.driver.click(SEARCH_SUBMIT)
         slow_down(3)
+    
+    def _filter_jobs(self, menu_css_selector: str, option: str) -> None:
+        try:
+            self.driver.click(menu_css_selector)
+            slow_down(0.5)
+            self.driver.click_link(option)
+            slow_down(3)
+        except:
+            print(f'error: failed to filter {option} jobs.')
 
     def filter_remote_jobs(self, remote_option:str = '') -> None:
         """remote or hybrid"""
         if remote_option.lower() == 'remote':
-            self.driver.click(REMOTE_FILTER)
-            slow_down(0.5)
-            self.driver.click_link('Remote')
-            slow_down(3)
+            self._filter_jobs(menu_css_selector=REMOTE_FILTER, 
+                              option='Remote')
         elif remote_option.lower() == 'hybrid':  # Hybrid work
-            self.driver.click(REMOTE_FILTER)
-            slow_down(0.5)
-            self.driver.click_link('Hybrid work')
-            slow_down(3)
+            self._filter_jobs(menu_css_selector=REMOTE_FILTER, 
+                              option='Hybrid work')
         else:
             print(f'error: {remote_option} is not a valid remote options.')
-
+    
     def filter_job_language(self, language_option:str = '') -> None:
         """English or French"""
         if language_option.lower() == 'english':
-            self.driver.click(LANGUAGE_FILTER)
-            slow_down(0.5)
-            self.driver.click_link('English')
-            slow_down(3) 
+            self._filter_jobs(menu_css_selector=LANGUAGE_FILTER,
+                              option='English')
         elif language_option.lower() == 'french':
-            self.driver.click(LANGUAGE_FILTER)
-            slow_down(0.5)
-            self.driver.click_link('Français')
-            slow_down(3)
+            self._filter_jobs(menu_css_selector=LANGUAGE_FILTER,
+                              option='Français')
         else:
-            print(f'error: {language_option} is not a valid remote options.')
+            print(f'error: {language_option} is not a valid language options.')
+
+
+
+    # def filter_remote_jobs(self, remote_option:str = '') -> None:
+    #     """remote or hybrid"""
+    #     if remote_option.lower() == 'remote':
+    #         self.driver.click(REMOTE_FILTER)
+    #         slow_down(0.5)
+    #         self.driver.click_link('Remote')
+    #         slow_down(3)
+    #     elif remote_option.lower() == 'hybrid':  # Hybrid work
+    #         self.driver.click(REMOTE_FILTER)
+    #         slow_down(0.5)
+    #         self.driver.click_link('Hybrid work')
+    #         slow_down(3)
+    #     else:
+    #         print(f'error: {remote_option} is not a valid remote options.')
+
+    # def filter_job_language(self, language_option:str = '') -> None:
+    #     """English or French"""
+    #     if language_option.lower() == 'english':
+    #         self.driver.click(LANGUAGE_FILTER)
+    #         slow_down(0.5)
+    #         self.driver.click_link('English')
+    #         slow_down(3) 
+    #     elif language_option.lower() == 'french':
+    #         self.driver.click(LANGUAGE_FILTER)
+    #         slow_down(0.5)
+    #         self.driver.click_link('Français')
+    #         slow_down(3)
+    #     else:
+    #         print(f'error: {language_option} is not a valid remote options.')
 
     def _expand_job_description(self, job_beacon) -> None:
         job_beacon.click()  # somehow need this to make ActionChains function properly
@@ -285,7 +318,7 @@ def main_x():
         collector.open_webpage()   #  cybersecurity, accountant,  
         collector.search_jobs(job_title='cybersecurity', job_location='Vancouver, BC')  # Toronto, ON  Montreal, QC
         collector.filter_remote_jobs('Hybrid')
-        collector.filter_job_language('English')
+        collector.filter_job_language('kkkk')
         collector.collect_jobposts(folder=download_folder)
         collector.go_to_next_page()
         slow_down(8)
