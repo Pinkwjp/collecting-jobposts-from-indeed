@@ -63,38 +63,6 @@ def perform_click(x, y) -> bool:
         return False
 
 
-
-# def click_checkbox_on_verification_page() -> bool:
-#     checkbox_image = './images/checkbox.png' 
-#     assert Path(checkbox_image).exists()
-#     checkbox_center = locate_image_center_on_screen(checkbox_image)
-#     if checkbox_center:
-#         pyautogui.moveTo(checkbox_center.x, checkbox_center.y, 2, pyautogui.easeInQuad) 
-#         pyautogui.click()
-#         print('clicked checkbox')
-#         sleep(4)  # wait for web page to response
-#         pyautogui.moveTo(223, 323, 2, pyautogui.easeInQuad) # move away from the clicked object 
-#         pyautogui.click()
-#         sleep(4)  # wait for web page to response
-#         return True
-#     else:
-#         return False
-
-
-# def at_target_page() -> bool:
-#     # images/symbol-collapse-folder.png
-#     # images/input-field-vertical-line.png  # appear on both page
-#     # images/search-symbol.png
-#     # images/cross.png
-#     # images/fr.png
-#     image_on_target_page = 'images/fr.png' 
-#     assert Path(image_on_target_page).exists()
-#     print(f'target image: {image_on_target_page}')
-#     if locate_image_center_on_screen(image_on_target_page):
-#         return True
-#     return False
-
-
 def start_pyautogui():
     """start pyautogui 
     NOTE: if remote interation is not enable yet need to mannually click on popup window to:
