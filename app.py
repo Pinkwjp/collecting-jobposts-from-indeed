@@ -33,6 +33,7 @@
 
 from importlib import reload
 from pathlib import Path
+from typing import Union
 
 from seleniumbase import Driver
 
@@ -110,7 +111,6 @@ class Collector:
         job_beacon.click()  # somehow need this to make ActionChains function properly
         slow_down(2)
         print('click job beacon.')
-
         actions = ActionChains(self.driver)
         actions.move_to_element(job_beacon).click(job_beacon)  # to make job post shown on screen
         print('performed actions: move to and click element.')
@@ -124,19 +124,7 @@ class Collector:
             f.write(full_job_detail.get_attribute('innerHTML'))
             print(f'saved jobpost {job_id}.')
 
-    def collect_jobposts(self, folder: str) -> None:
-        # find all job beacons on current page
-        assert Path(folder).exists() and Path(folder).is_dir()
-
-        job_beacons = self.driver.find_elements(JOB_BEACON)  
-        for i, job_beacon in enumerate(job_beacons):
-            slow_down(2)
-            self._expand_job_description(job_beacon)
-            self._download_full_job_detail(folder, job_beacon)
-            
-            if i > 2: break
-
-    def go_to_next_page(self) -> bool:
+    def _go_to_next_page(self) -> bool:
         try:
             url = self.driver.get_current_url()
             self.driver.find_element(NEXT_PAGE).click()
@@ -149,21 +137,37 @@ class Collector:
             print('error: failed to go to next page.')
             return False
 
+    def collect_jobposts(self, folder: str, n: Union[int, None] = None) -> int:
+        count = 0
+        while (n is None) or (count <= n):
+            job_beacons = self.driver.find_elements(JOB_BEACON)  
+            for job_beacon in job_beacons:
+                slow_down(2)
+                self._expand_job_description(job_beacon)
+                self._download_full_job_detail(folder, job_beacon)
+                count += 1
+                if count == n:
+                    break
+            if (count == n) or (not self._go_to_next_page()):
+                print(f'collected {count} jobposts.')
+                return count
 
+    
 
 def main():
-    download_folder = './jobposts/test/'
-    assert Path(download_folder).exists() and Path(download_folder).is_dir()
+    download_folder = './jobposts/'
+    if not Path(download_folder).exists():
+        Path.mkdir(download_folder)
+    assert Path(download_folder).is_dir()
 
     start_pyautogui() 
     with get_driver(undetectable=True, incognito=True) as driver:  
         collector = Collector(driver, 'https://ca.indeed.com/')
-        collector.open_webpage()   #  cybersecurity, accountant,  
-        collector.search_jobs(job_title='cybersecurity', job_location='Vancouver, BC')  # Toronto, ON  Montreal, QC
-        collector.filter_remote_jobs('Hybrid')
-        collector.filter_job_language('kkkk')
-        collector.collect_jobposts(folder=download_folder)
-        collector.go_to_next_page()
+        collector.open_webpage()   #  cybersecurity, accountant, software engineer, 
+        collector.search_jobs(job_title='software engineer', job_location='Montreal, QC')  # Toronto, ON  Montreal, QC  Vancouver, BC
+        collector.filter_remote_jobs('remote')
+        collector.filter_job_language('English')
+        collector.collect_jobposts(download_folder, n=20)
         slow_down(8)
 
 
