@@ -75,16 +75,36 @@ class Collector:
         self.driver.click(SEARCH_SUBMIT)
         slow_down(3)
 
-    def filter_jobs(self) -> None:
-        self.driver.click(REMOTE_FILTER)
-        slow_down(0.5)
-        self.driver.click(REMOTE)
-        slow_down(3)
-        self.driver.click(LANGUAGE_FILTER)
-        slow_down(0.5)
-        self.driver.click_link('English')
-        slow_down(5)  # wait for page to full loaded
-    
+    def filter_remote_jobs(self, remote_option:str = '') -> None:
+        """remote or hybrid"""
+        if remote_option.lower() == 'remote':
+            self.driver.click(REMOTE_FILTER)
+            slow_down(0.5)
+            self.driver.click_link('Remote')
+            slow_down(3)
+        elif remote_option.lower() == 'hybrid':  # Hybrid work
+            self.driver.click(REMOTE_FILTER)
+            slow_down(0.5)
+            self.driver.click_link('Hybrid work')
+            slow_down(3)
+        else:
+            print(f'error: {remote_option} is not a valid remote options.')
+
+    def filter_job_language(self, language_option:str = '') -> None:
+        """English or French"""
+        if language_option.lower() == 'english':
+            self.driver.click(LANGUAGE_FILTER)
+            slow_down(0.5)
+            self.driver.click_link('English')
+            slow_down(3) 
+        elif language_option.lower() == 'french':
+            self.driver.click(LANGUAGE_FILTER)
+            slow_down(0.5)
+            self.driver.click_link('Français')
+            slow_down(3)
+        else:
+            print(f'error: {language_option} is not a valid remote options.')
+
     def _expand_job_description(self, job_beacon) -> None:
         job_beacon.click()  # somehow need this to make ActionChains function properly
         slow_down(2)
@@ -95,7 +115,6 @@ class Collector:
         print('performed actions: move to and click element.')
         slow_down(3)
     
-    
     def _download_full_job_detail(self, folder, job_beacon) -> None:
         """download the currently expanded job description"""
         job_id = job_beacon.find_element(By.TAG_NAME,'a').get_attribute('id')
@@ -103,7 +122,6 @@ class Collector:
         with open(f'{folder}/{job_id}.html', 'w', encoding='utf-8') as f:
             f.write(full_job_detail.get_attribute('innerHTML'))
             print(f'saved jobpost {job_id}.')
-
 
     def collect_jobposts(self, folder: str) -> None:
         # find all job beacons on current page
@@ -116,7 +134,6 @@ class Collector:
             self._download_full_job_detail(folder, job_beacon)
             
             if i > 2: break
-
 
     def go_to_next_page(self) -> bool:
         try:
@@ -265,9 +282,10 @@ def main_x():
     start_pyautogui() 
     with get_driver(undetectable=True, incognito=True) as driver:  
         collector = Collector(driver, 'https://ca.indeed.com/')
-        collector.open_webpage()
-        collector.search_jobs(job_title='cybersecurity', job_location='Toronto, ON') # cybersecurity, accountant,  
-        # collector.filter_jobs()
+        collector.open_webpage()   #  cybersecurity, accountant,  
+        collector.search_jobs(job_title='cybersecurity', job_location='Vancouver, BC')  # Toronto, ON  Montreal, QC
+        collector.filter_remote_jobs('Hybrid')
+        collector.filter_job_language('English')
         collector.collect_jobposts(folder=download_folder)
         collector.go_to_next_page()
         slow_down(8)
