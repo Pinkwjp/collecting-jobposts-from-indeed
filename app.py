@@ -48,7 +48,7 @@ reload(selectors)
 from src.utils import get_driver, slow_down
 from src.utils import start_pyautogui, handle_verification
 from src.selectors import (SEARCH_TITLE, SEARCH_LOCATION, SEARCH_SUBMIT, 
-                           REMOTE_FILTER, REMOTE, HYDBRID, NEXT_PAGE,
+                           REMOTE_FILTER, NEXT_PAGE,
                            LANGUAGE_FILTER, JOB_BEACON, FULL_JOB_DETAIL)
 
 
@@ -106,38 +106,6 @@ class Collector:
         else:
             print(f'error: {language_option} is not a valid language options.')
 
-
-
-    # def filter_remote_jobs(self, remote_option:str = '') -> None:
-    #     """remote or hybrid"""
-    #     if remote_option.lower() == 'remote':
-    #         self.driver.click(REMOTE_FILTER)
-    #         slow_down(0.5)
-    #         self.driver.click_link('Remote')
-    #         slow_down(3)
-    #     elif remote_option.lower() == 'hybrid':  # Hybrid work
-    #         self.driver.click(REMOTE_FILTER)
-    #         slow_down(0.5)
-    #         self.driver.click_link('Hybrid work')
-    #         slow_down(3)
-    #     else:
-    #         print(f'error: {remote_option} is not a valid remote options.')
-
-    # def filter_job_language(self, language_option:str = '') -> None:
-    #     """English or French"""
-    #     if language_option.lower() == 'english':
-    #         self.driver.click(LANGUAGE_FILTER)
-    #         slow_down(0.5)
-    #         self.driver.click_link('English')
-    #         slow_down(3) 
-    #     elif language_option.lower() == 'french':
-    #         self.driver.click(LANGUAGE_FILTER)
-    #         slow_down(0.5)
-    #         self.driver.click_link('Français')
-    #         slow_down(3)
-    #     else:
-    #         print(f'error: {language_option} is not a valid remote options.')
-
     def _expand_job_description(self, job_beacon) -> None:
         job_beacon.click()  # somehow need this to make ActionChains function properly
         slow_down(2)
@@ -183,132 +151,7 @@ class Collector:
 
 
 
-
-
 def main():
-    start_pyautogui() 
-    with get_driver(undetectable=True, incognito=True) as driver:  
-        url = 'https://ca.indeed.com/'
-        driver.uc_open_with_reconnect(url, 10)
-        slow_down(1)
-
-        driver.maximize_window()
-        slow_down(5) # wait long enough for the cloudflare checkbox to appear
-        
-        if not handle_verification():
-            print('failed to handle cloudflare verification, exiting...')
-            return
-        slow_down(3)
-        
-        # search jobs
-        driver.type(SEARCH_TITLE, 'accountant')  # lawyer, accountant, software developer, java developer
-        slow_down(2)
-        driver.type(SEARCH_LOCATION, 'Vancouver, BC')
-        slow_down(2)
-        driver.click(SEARCH_SUBMIT)
-        slow_down(3)
-        
-        # filter jobs
-        driver.click(REMOTE_FILTER)
-        slow_down(0.5)
-        driver.click(REMOTE)
-        slow_down(3)
-        driver.click(LANGUAGE_FILTER)
-        slow_down(0.5)
-        driver.click_link('English')
-        slow_down(4)  # wait for page to full loaded
-        
-
-
-        # find all job beacons on current page
-        job_beacons = driver.find_elements("div[class='job_seen_beacon']")  
-        if not job_beacons:
-            print('cannot find job becons.')
-            return
-        else:
-            print('find job becons.')
-        slow_down(2)
-
-        # click and expand job descriptions
-        i = 0
-        for beacon in job_beacons:
-            beacon.click() # somehow need this to make ActionChains function properly
-            print('click job beacon.')
-            slow_down(1)
-
-            try:
-                actions = ActionChains(driver)
-                actions.move_to_element(beacon).click(beacon)  # scroll_to_element(beacon).
-                print('performed actions: move to and click element.')
-                slow_down(3)
-                
-                job_detail = driver.find_element("div[id='jobsearch-ViewjobPaneWrapper']")  # will raise error if cannot find target
-                if job_detail:
-                    print('find job detail.')
-                else:
-                    print('cannot find job detail.')
-                slow_down(1)
-                
-                id = beacon.find_element(By.TAG_NAME,'a').get_attribute('id')
-                
-                # with open('workfile', encoding="utf-8") as f:
-                try:
-                    with open(f'./jobposts/mar-24/{id}.html', 'w', encoding='utf-8') as f:
-                        f.write(job_detail.get_attribute('innerHTML'))
-                        print(f'saved jobpost {id}.')
-                except Exception as e:
-                    print(f'when trying to save jobpost, this error happended: {e}')
-
-            except:
-                print('something wrong with actions.')
-            
-            i += 1
-            if i > 3: break
-        print()
-
-
-
-        # go to next page
-        try:
-            # driver.scroll_to_bottom() # not working
-
-            current_url = driver.get_current_url()
-
-            next_page_button = driver.find_element("a[data-testid='pagination-page-next']") # will raise error if cannot find target
-            next_page_button.click()
-            print('clicked next page')
-            slow_down(3)
-
-            new_url = driver.get_current_url()
-            if current_url != new_url:
-                print('arrived at next page.')
-            
-
-            # move_to_element_with_offset
-            # scroll_to_element
-
-            # if not next_page_button:
-            #     print('cannot find next page button.')
-            # else:
-            #     print('found next page button')
-            #     current_url = driver.get_current_url()
-            #     ActionChains(driver).move_to_element(next_page_button).click(next_page_button)
-            #     print('clicked next page')
-            #     sleepy(3)
-            #     new_url = driver.get_current_url()
-            #     if current_url != new_url:
-            #         print('arrived at next page.')
-        except:
-            print('cannot find next page button.')
-
-
-        slow_down(8)
-
-
-
-
-
-def main_x():
     download_folder = './jobposts/test/'
     assert Path(download_folder).exists() and Path(download_folder).is_dir()
 
@@ -328,8 +171,5 @@ def main_x():
 if __name__ == '__main__':
     # python -m app
 
-    # main()
-    main_x()
-
-
+    main()
     
