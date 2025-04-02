@@ -32,10 +32,18 @@ class Collector:
         slow_down(5) # wait long enough for the cloudflare checkbox to appear
         handle_verification()
         slow_down(1)
-
+    
+    # TODO: find_element so can clear input field
     def search_jobs(self, job_title: str, job_location: str) -> None:
+        # self.clear(selector, by="css selector", timeout=None)
+        # self.find_element(selector, by="css selector", timeout=None)
+        # webelement.clear()
+        self.driver.clear(SEARCH_TITLE, timeout=3)
+        slow_down(0.5)
         self.driver.type(SEARCH_TITLE, job_title)  
         slow_down(2)
+        self.driver.clear(SEARCH_LOCATION)
+        slow_down(0.5)
         self.driver.type(SEARCH_LOCATION, job_location)
         slow_down(2)
         self.driver.click(SEARCH_SUBMIT)
@@ -114,7 +122,7 @@ class Collector:
                 if count == n:
                     break
             if (count == n) or (not self._go_to_next_page()):
-                print(f'collected {count} jobposts.')
+                # print(f'collected {count} jobposts.')
                 return count
 
     
