@@ -19,7 +19,7 @@ from src.selectors import (SEARCH_TITLE, SEARCH_LOCATION, SEARCH_SUBMIT,
 
 
 from selenium.webdriver.common.keys import Keys
- 
+from selenium.webdriver.remote.webelement import WebElement
  
 
 
@@ -37,55 +37,26 @@ class Collector:
         handle_verification()
         slow_down(1)
     
-    # TODO: find_element so can clear input field
-    def search_jobs(self, job_title: str, job_location: str) -> None:
-        # self.clear(selector, by="css selector", timeout=None)
-        # self.find_element(selector, by="css selector", timeout=None)
-        # webelement.clear()
-
-        # self.driver.clear(SEARCH_TITLE, timeout=3)  # not work
-        # try:
-        #     title_field = self.driver.find_element(SEARCH_TITLE)
-        #     slow_down(1)
-        # except:
-        #     print('error: cannot find title field!')
-        
-        # try:
-        #     title_field.sendKeys(Keys.CONTROL + "a")
-        #     title_field.sendKeys(Keys.DELETE)
-        #     slow_down(0.5)
-        # except:
-        #     print('error: cannot clear title filed!')
-        
-        # self.driver.type(SEARCH_TITLE, job_title)  
-        # slow_down(1)
-
-        # location_field = self.driver.find_element(SEARCH_LOCATION)
-        # slow_down(1)
-        # location_field.sendKeys(Keys.CONTROL + "a")
-        # location_field.sendKeys(Keys.DELETE)
-        # slow_down(0.5)
-        # self.driver.type(SEARCH_LOCATION, job_location)
-        # slow_down(1)
-
-        title_field_element = self.driver.find_element(SEARCH_TITLE)
-        assert title_field_element
+    def _clear_and_type(self, input_element_css: str, text: str) -> None:
+        element = self.driver.find_element(input_element_css)
+        assert element
+        # clear input field
         actions = ActionChains(self.driver)
-        actions.move_to_element(title_field_element)
-        for _ in range(len(title_field_element.get_attribute('value').split())):
-            actions.double_click(title_field_element)
-            actions.send_keys(Keys.BACKSPACE)
-            print('backspace')
+        actions.move_to_element(element)
+        actions.click(element)  # activate input field
+        actions.double_click(element)  # double click to selecet all text
+        actions.send_keys(Keys.BACKSPACE)  # delete selected text
         actions.perform()
-        slow_down(1)
-        if not title_field_element.get_attribute('value'):   # aria-label   value   get_attribute(name) → str | None
-            print('OK, input field is cleared.')
-        else:
-            print('Not OK, input field is not cleared.')
+        slow_down(0.5)
+        assert not element.get_attribute('value')  # verify input field is clear
+        # type text
+        self.driver.type(input_element_css, text)  
 
-        self.driver.type(SEARCH_TITLE, job_title)  
+    def search_jobs(self, job_title: str, job_location: str) -> None:
+        self._clear_and_type(input_element_css=SEARCH_TITLE, text=job_title)
         slow_down(1)
-
+        self._clear_and_type(input_element_css=SEARCH_LOCATION, text=job_location)
+        slow_down(1)
         self.driver.click(SEARCH_SUBMIT)
         slow_down(3)
     
