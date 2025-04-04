@@ -18,6 +18,10 @@ from src.selectors import (SEARCH_TITLE, SEARCH_LOCATION, SEARCH_SUBMIT,
                            LANGUAGE_FILTER, JOB_BEACON, FULL_JOB_DETAIL)
 
 
+from selenium.webdriver.common.keys import Keys
+ 
+ 
+
 
 class Collector:
 
@@ -38,14 +42,50 @@ class Collector:
         # self.clear(selector, by="css selector", timeout=None)
         # self.find_element(selector, by="css selector", timeout=None)
         # webelement.clear()
-        self.driver.clear(SEARCH_TITLE, timeout=3)
-        slow_down(0.5)
+
+        # self.driver.clear(SEARCH_TITLE, timeout=3)  # not work
+        # try:
+        #     title_field = self.driver.find_element(SEARCH_TITLE)
+        #     slow_down(1)
+        # except:
+        #     print('error: cannot find title field!')
+        
+        # try:
+        #     title_field.sendKeys(Keys.CONTROL + "a")
+        #     title_field.sendKeys(Keys.DELETE)
+        #     slow_down(0.5)
+        # except:
+        #     print('error: cannot clear title filed!')
+        
+        # self.driver.type(SEARCH_TITLE, job_title)  
+        # slow_down(1)
+
+        # location_field = self.driver.find_element(SEARCH_LOCATION)
+        # slow_down(1)
+        # location_field.sendKeys(Keys.CONTROL + "a")
+        # location_field.sendKeys(Keys.DELETE)
+        # slow_down(0.5)
+        # self.driver.type(SEARCH_LOCATION, job_location)
+        # slow_down(1)
+
+        title_field_element = self.driver.find_element(SEARCH_TITLE)
+        assert title_field_element
+        actions = ActionChains(self.driver)
+        actions.move_to_element(title_field_element)
+        for _ in range(len(title_field_element.get_attribute('value').split())):
+            actions.double_click(title_field_element)
+            actions.send_keys(Keys.BACKSPACE)
+            print('backspace')
+        actions.perform()
+        slow_down(1)
+        if not title_field_element.get_attribute('value'):   # aria-label   value   get_attribute(name) → str | None
+            print('OK, input field is cleared.')
+        else:
+            print('Not OK, input field is not cleared.')
+
         self.driver.type(SEARCH_TITLE, job_title)  
-        slow_down(2)
-        self.driver.clear(SEARCH_LOCATION)
-        slow_down(0.5)
-        self.driver.type(SEARCH_LOCATION, job_location)
-        slow_down(2)
+        slow_down(1)
+
         self.driver.click(SEARCH_SUBMIT)
         slow_down(3)
     
