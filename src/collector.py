@@ -1,6 +1,9 @@
 
 from importlib import reload
-from typing import Union
+from typing import Union, Dict
+from pathlib import Path
+import json
+import shelve
 
 from seleniumbase import Driver
 
@@ -25,9 +28,11 @@ from selenium.webdriver.remote.webelement import WebElement
 
 class Collector:
 
-    def __init__(self, driver: Driver, url: str) -> None:
+    def __init__(self, driver: Driver, url: str, job_id_db_path: str) -> None:
         self.driver = driver
         self.url = url
+        # assert Path(job_id_db_path).exists() and Path(job_id_db_path).suffix == '.json'
+        self.db = job_id_db_path
     
     def open_webpage(self) -> None:
         self.driver.uc_open_with_reconnect(self.url, 10)
@@ -100,7 +105,7 @@ class Collector:
         print('performed actions: move to and click element.')
         slow_down(3)
     
-    def _download_full_job_detail(self, folder, job_beacon) -> None:
+    def _download_full_job_detail(self, folder: str, job_beacon: WebElement) -> None:
         """download the currently expanded job description"""
         job_id = job_beacon.find_element(By.TAG_NAME,'a').get_attribute('id')
         full_job_detail = self.driver.find_element(FULL_JOB_DETAIL)  # will raise error if cannot find target
@@ -120,20 +125,37 @@ class Collector:
         except:
             print('error: failed to go to next page.')
             return False
-
+    
     def collect_jobposts(self, folder: str, n: Union[int, None] = None) -> int:
         count = 0
         while (n is None) or (count <= n):
             job_beacons = self.driver.find_elements(JOB_BEACON)  
             for job_beacon in job_beacons:
+                job_id = job_beacon.find_element(By.TAG_NAME,'a').get_attribute('id')
+                
+                try:
+                    with shelve.open(self.db) as db:
+                        if job_id in db: 
+                            print(f'jobpost {job_id} already downloaded, skipped.')
+                            continue
+                        db[job_id] = f'{job_id}.html'
+                        print('updated db.')
+                except:
+                    print('error in db.')
+
                 slow_down(2)
                 self._expand_job_description(job_beacon)
                 self._download_full_job_detail(folder, job_beacon)
                 count += 1
                 if count == n:
                     break
+                    
             if (count == n) or (not self._go_to_next_page()):
                 # print(f'collected {count} jobposts.')
                 return count
 
-    
+
+
+
+
+
