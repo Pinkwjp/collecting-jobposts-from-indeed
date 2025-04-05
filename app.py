@@ -34,36 +34,45 @@
 from importlib import reload
 from pathlib import Path
 
-from src import utils, selectors
+from src import utils, selectors, collector
 reload(utils)  
 reload(selectors)
+reload(collector)
 
 from src.utils import get_driver, slow_down
 from src.utils import start_pyautogui 
-
 from src.collector import Collector
 
 
 
 def main():
-    download_folder = './jobposts/'
+    download_folder = './jobposts/remote/'
     if not Path(download_folder).exists():
-        Path.mkdir(download_folder)
+        Path(download_folder).mkdir(parents=True)
     assert Path(download_folder).is_dir()
 
     start_pyautogui() 
     with get_driver(undetectable=True, incognito=True) as driver:  
-        collector = Collector(driver, 'https://ca.indeed.com/')
-        collector.open_webpage()   #  cybersecurity, accountant, software engineer, 
-        collector.search_jobs(job_title='software engineer', job_location='Montreal, QC')  # Toronto, ON  Montreal, QC  Vancouver, BC
-        collector.filter_remote_jobs('remote')
-        collector.filter_job_language('English')
-        collector.collect_jobposts(download_folder, n=5)
-        slow_down(8)
+        collector = Collector(driver, 'https://ca.indeed.com/', 
+                              job_id_db_path='./jobposts/id_to_filename_db')  # './jobposts/jobpost_id_to_filename.json'
+        collector.open_webpage()   #  'cybersecurity', 'accountant', 'sales person', 'civil engineer'
+        for title in ['python', 'data science']:  #  , 'software engineer', 'software developer', 'machine learning'
+            for city in ['Toronto, ON']:  # 'Montreal, QC',  , 'Vancouver, BC'
+                collector.search_jobs(job_title=title, job_location=city)  
+                collector.filter_remote_jobs('remote')
+                collector.filter_job_language('English')
+                n_collected = collector.collect_jobposts(download_folder, n=2)
+                print(f'OK, collected {n_collected} {title} related jobposts in {city}.')
+                slow_down(8)
+
+
+
 
 
 if __name__ == '__main__':
     # python -m app
     main()
     
+
+
 
