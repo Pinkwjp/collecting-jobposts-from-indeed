@@ -101,15 +101,18 @@ class Collector:
         actions = ActionChains(self.driver)
         actions.move_to_element(job_beacon).click(job_beacon)  # to make job post shown on screen
         print('performed actions: move to and click element.')
-        slow_down(2)
+        slow_down(2.2)
     
     def _download_full_job_detail(self, folder: str, job_beacon: WebElement) -> None:
         """download the currently expanded job description"""
-        job_id = job_beacon.find_element(By.TAG_NAME,'a').get_attribute('id')
-        full_job_detail = self.driver.find_element(FULL_JOB_DETAIL)  # will raise error if cannot find target
-        with open(f'{folder}/{job_id}.html', 'w', encoding='utf-8') as f:
-            f.write(full_job_detail.get_attribute('innerHTML'))
-            print(f'saved jobpost {job_id}.')
+        try:
+            job_id = job_beacon.find_element(By.TAG_NAME,'a').get_attribute('id')
+            full_job_detail = self.driver.find_element(FULL_JOB_DETAIL)  # will raise error if cannot find target
+            with open(f'{folder}/{job_id}.html', 'w', encoding='utf-8') as f:
+                f.write(full_job_detail.get_attribute('innerHTML'))
+                print(f'saved jobpost {job_id}.')
+        except:
+            print(f'error: something went wrong when tring to save jobpost {job_id}.')
 
     def _go_to_next_page(self) -> bool:
         try:
