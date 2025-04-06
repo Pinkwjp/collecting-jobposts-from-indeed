@@ -54,14 +54,14 @@ def main():
     start_pyautogui() 
     with get_driver(undetectable=True, incognito=True) as driver:  
         collector = Collector(driver, 'https://ca.indeed.com/', 
-                              job_id_db_path='./jobposts/id_to_filename_db')  # './jobposts/jobpost_id_to_filename.json'
-        collector.open_webpage()   #  'cybersecurity', 'accountant', 'sales person', 'civil engineer'
-        for title in ['python', 'data science']:  #  , 'software engineer', 'software developer', 'machine learning'
-            for city in ['Toronto, ON']:  # 'Montreal, QC',  , 'Vancouver, BC'
+                              job_id_db_path='./jobposts/id_to_filename_remote_db')  # './jobposts/jobpost_id_to_filename.json'
+        collector.open_webpage()              #  'cybersecurity', 'accountant', 'sales person', 'civil engineer'
+        for title in ['python', 'data science', 'machine learning', 'software developer']: 
+            for city in ['Toronto, ON', 'Vancouver, BC', 'Montreal, QC']:  #   , 'Vancouver, BC'
                 collector.search_jobs(job_title=title, job_location=city)  
                 collector.filter_remote_jobs('remote')
                 collector.filter_job_language('English')
-                n_collected = collector.collect_jobposts(download_folder, n=2)
+                n_collected = collector.collect_jobposts(download_folder, n=100)
                 print(f'OK, collected {n_collected} {title} related jobposts in {city}.')
                 slow_down(8)
 
@@ -71,6 +71,7 @@ def main():
 
 if __name__ == '__main__':
     # python -m app
+    
     main()
     
 
