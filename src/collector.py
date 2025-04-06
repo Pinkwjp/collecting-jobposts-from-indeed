@@ -1,8 +1,6 @@
 
 from importlib import reload
-from typing import Union, Dict
-from pathlib import Path
-import json
+from typing import Union
 import shelve
 
 from seleniumbase import Driver
@@ -98,12 +96,12 @@ class Collector:
 
     def _expand_job_description(self, job_beacon) -> None:
         job_beacon.click()  # somehow need this to make ActionChains function properly
-        slow_down(2)
+        slow_down(1.2)
         print('click job beacon.')
         actions = ActionChains(self.driver)
         actions.move_to_element(job_beacon).click(job_beacon)  # to make job post shown on screen
         print('performed actions: move to and click element.')
-        slow_down(3)
+        slow_down(2)
     
     def _download_full_job_detail(self, folder: str, job_beacon: WebElement) -> None:
         """download the currently expanded job description"""
@@ -126,6 +124,25 @@ class Collector:
             print('error: failed to go to next page.')
             return False
     
+    def _is_in_db(self, job_id: str) -> bool:
+        try:
+            with shelve.open(self.db) as db:
+                if job_id in db: 
+                    print(f'jobpost {job_id} already in db.')
+                    return True
+                else:
+                    return False
+        except:
+            print('error when trying to open db.')
+    
+    def _add_to_db(self, job_id: str) -> None:
+        try:
+            with shelve.open(self.db) as db:
+                db[job_id] = f'{job_id}.html'
+                print(f'add {job_id} to db.') 
+        except:
+            print('error when trying to open db.')
+
     def collect_jobposts(self, folder: str, n: Union[int, None] = None) -> int:
         count = 0
         while (n is None) or (count <= n):
@@ -133,16 +150,9 @@ class Collector:
             for job_beacon in job_beacons:
                 job_id = job_beacon.find_element(By.TAG_NAME,'a').get_attribute('id')
                 
-                try:
-                    with shelve.open(self.db) as db:
-                        if job_id in db: 
-                            print(f'jobpost {job_id} already downloaded, skipped.')
-                            continue
-                        db[job_id] = f'{job_id}.html'
-                        print('updated db.')
-                except:
-                    print('error in db.')
-
+                if self._is_in_db(job_id): 
+                    continue
+                self._add_to_db(job_id)    
                 slow_down(2)
                 self._expand_job_description(job_beacon)
                 self._download_full_job_detail(folder, job_beacon)
