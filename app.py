@@ -1,5 +1,3 @@
-# python -m app
-
 
 # NOTE: when encounter 'Xlib.error.DisplayConnectionError'
 # in Linux terminal run: 'xhost +' 
@@ -39,14 +37,14 @@ reload(utils)
 reload(selectors)
 reload(collector)
 
+from src.collector import Collector 
 from src.utils import get_driver, slow_down
 from src.utils import start_pyautogui 
-from src.collector import Collector
 
 
 
 def main():
-    download_folder = './jobposts/remote/'
+    download_folder = './jobposts/english/'
     if not Path(download_folder).exists():
         Path(download_folder).mkdir(parents=True)
     assert Path(download_folder).is_dir()
@@ -54,12 +52,12 @@ def main():
     start_pyautogui() 
     with get_driver(undetectable=True, incognito=True) as driver:  
         collector = Collector(driver, 'https://ca.indeed.com/', 
-                              job_id_db_path='./jobposts/id_to_filename_remote_db')  # './jobposts/jobpost_id_to_filename.json'
+                              job_id_db_path='./jobposts/id_to_filename_db')  # jobposts/id_to_filename_db         id_to_filename_remote_db
         collector.open_webpage()              #  'cybersecurity', 'accountant', 'sales person', 'civil engineer'
-        for title in ['python', 'data science', 'machine learning', 'software developer']: 
-            for city in ['Toronto, ON', 'Vancouver, BC', 'Montreal, QC']:  #   , 'Vancouver, BC'
+        for title in ['software developer', 'python', 'data science', 'machine learning', 'AI']: # 'python', 'data science', 'machine learning', 
+            for city in ['Vancouver, BC', 'Montreal, QC', 'Toronto, ON']:   #'Vancouver, BC'   'Toronto, ON'
                 collector.search_jobs(job_title=title, job_location=city)  
-                collector.filter_remote_jobs('remote')
+                # collector.filter_remote_jobs('remote')
                 collector.filter_job_language('English')
                 n_collected = collector.collect_jobposts(download_folder, n=100)
                 print(f'OK, collected {n_collected} {title} related jobposts in {city}.')
